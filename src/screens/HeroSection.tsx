@@ -5,7 +5,7 @@ import { Button } from "../components/Button";
 
 export function HeroSection() {
   return (
-    <section className="min-h-[90vh] w-full flex  items-center bg-gradient-to-b from-emerald-50 to-white">
+    <section className="min-h-[90vh] w-full flex items-center bg-gradient-to-b from-emerald-50 to-white">
       <div className="container mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center justify-around">
         <div className="order-2 md:order-1">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">

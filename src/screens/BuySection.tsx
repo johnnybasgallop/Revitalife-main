@@ -17,11 +17,11 @@ export function BuySection() {
   };
 
   return (
-    <section id="buy" className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="bg-white rounded-3xl shadow-lg overflow-hidden max-w-5xl mx-auto">
+    <section id="buy" className="pt-10 pb-20 bg-white">
+      <div className="w-full container mx-auto px-4">
+        <div className="bg-white rounded-3xl shadow-lg overflow-hidden w-full min-h-[70vh] mx-auto">
           <div className="grid md:grid-cols-2 gap-0">
-            <div className="bg-emerald-50 p-8 flex items-center justify-center">
+            <div className="bg-emerald-50 p-8 flex items-center justify-center h-[70vh]">
               <div className="relative h-[350px] w-[350px]">
                 <Image
                   src="/Product-Single-Light.jpeg"
