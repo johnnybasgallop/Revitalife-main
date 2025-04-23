@@ -1,8 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Revitalife - Premium Wellness Drink Website
+
+A production-grade Next.js 14 website for a premium wellness drink powder company, built with TypeScript and Tailwind CSS.
+
+## Features
+
+- Modern, clean, premium design
+- Fully responsive layout
+- App Router architecture
+- TypeScript for type safety
+- Tailwind CSS for styling
+- Accessibility-focused
+- SEO optimized
+
+## Site Structure
+
+- Hero Section: Large product display with bold headline and CTA
+- Buy Now Section: Product details, pricing, and purchase options
+- Ingredients Section: Highlight of key superfoods and nutrients
+- FAQ Section: Interactive accordion for common questions
+- Director's Message: Founder's story and mission
+- Testimonials: Customer feedback
+- Footer: Site links, social media, and contact info
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn
+# or
+pnpm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -10,27 +42,37 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The site is ready for deployment on platforms like Vercel, Netlify, or any other hosting service that supports Next.js.
 
-## Learn More
+```bash
+npm run build
+# or
+yarn build
+# or
+pnpm build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Design Decisions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Color Palette**: Natural tones (green, yellow, earthy neutrals)
+- **Typography**: Clean, modern sans-serif fonts
+- **Layout**: Spacious, with clear hierarchy and focus on product photography
+- **Components**: Modular and reusable for consistency
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes for Further Development
 
-## Deploy on Vercel
+- Replace placeholder images with actual product photography
+- Set up a proper CMS for content management
+- Implement e-commerce functionality
+- Add analytics tracking
+- Create additional pages (About, Blog, etc.)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.
