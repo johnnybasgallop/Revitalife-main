@@ -5,34 +5,47 @@ import { Button } from "../components/Button";
 
 export function HeroSection() {
   return (
-    <section className="min-h-[90vh] w-full flex items-center bg-gradient-to-b from-emerald-50 to-white">
-      <div className="container mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center justify-around">
-        <div className="order-2 md:order-1">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
-            Daily Wellness in a Scoop
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Revitalife combines 22 powerful superfoods in a delicious mango-flavored powder. Give your body what it needs to thrive.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" onClick={() => document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' })}>
-              Shop Now
-            </Button>
-            <Button variant="secondary" size="lg">
-              Learn More
-            </Button>
-          </div>
+    <section className="relative min-h-[100vh] w-full flex items-center overflow-hidden">
+      {/* Background image */}
+      <Image
+        src="/hero-image/Runway 2025-04-24T18_55_58.805Z Expand Image.jpg"
+        alt="Green background"
+        fill
+        priority
+        className="object-cover absolute inset-0"
+        style={{ zIndex: 1 }}
+      />
+
+      {/* Dark overlay - with higher opacity for better visibility */}
+      <div
+        className="absolute inset-0 bg-black opacity-70"
+        style={{ zIndex: 2 }}
+      ></div>
+
+      {/* Content */}
+      <div
+        className="container mx-auto px-4 py-20 flex flex-col items-center text-center relative"
+        style={{ zIndex: 3 }}
+      >
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+          ESSENTIAL GREENS BLEND
+        </h1>
+        <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl">
+          22 superfoods for daily wellness in one delicious scoop
+        </p>
+
+        <div className="mt-6">
+          <Button
+            size="lg"
+            onClick={() => document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Shop Now
+          </Button>
         </div>
-        <div className="order-1 md:order-2 flex justify-center">
-          <div className="relative h-[400px] w-[400px] md:h-[500px] md:w-[500px]">
-            <Image
-              src="/Product-Single.png"
-              alt="Revitalife Superfood Powder"
-              fill
-              priority
-              className="object-contain rounded-lg"
-            />
-          </div>
+
+        {/* Circular indicator */}
+        <div className="h-12 w-12 border-2 border-amber-500 rounded-full mt-16 flex items-center justify-center">
+          <div className="h-8 w-8 bg-amber-500 rounded-full"></div>
         </div>
       </div>
     </section>

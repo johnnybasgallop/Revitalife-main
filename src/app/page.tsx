@@ -14,15 +14,17 @@ import {
 export default function Home() {
   return (
     <>
-      <main>
-      <Header />
-        <HeroSection />
-        <BuySection />
-        <IngredientsSection />
-        <FAQSection />
-        <AboutSection />
-        <TestimonialsSection />
-      </main>
+      <div className="relative">
+        <Header />
+        <main>
+          <HeroSection />
+          <BuySection />
+          <IngredientsSection />
+          <FAQSection />
+          <AboutSection />
+          <TestimonialsSection />
+        </main>
+      </div>
       <Footer />
     </>
   );

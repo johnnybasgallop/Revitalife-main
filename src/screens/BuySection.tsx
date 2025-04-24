@@ -24,7 +24,7 @@ export function BuySection() {
             <div className="bg-emerald-50 p-8 flex items-center justify-center h-[70vh]">
               <div className="relative h-[350px] w-[350px]">
                 <Image
-                  src="/Product-Single-Light.jpeg"
+                  src="/Product-Transparent.png"
                   alt="Revitalife Superfood Powder Package"
                   fill
                   className="object-contain"

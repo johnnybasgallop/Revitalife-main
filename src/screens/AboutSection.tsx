@@ -1,24 +1,11 @@
 "use client";
 
-import Image from "next/image";
 
 export function AboutSection() {
   return (
     <section id="about" className="py-20 bg-emerald-50">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 relative">
-              <Image
-                src="/founder.jpg"
-                alt="Founder"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <h3 className="text-2xl font-semibold text-gray-900">Dr. Emma Chen</h3>
-            <p className="text-gray-600">Founder & Nutritionist</p>
-          </div>
+        <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Our Mission
           </h2>
