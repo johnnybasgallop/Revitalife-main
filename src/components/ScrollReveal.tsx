@@ -1,86 +1,140 @@
 "use client";
 
-import { motion, useAnimation } from 'framer-motion';
-import { ReactNode, useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { motion, useInView, Variant } from "framer-motion";
+import { ReactNode, useRef } from "react";
 
-type AnimationVariant = 'fadeIn' | 'fadeInUp' | 'fadeInDown' | 'fadeInLeft' | 'fadeInRight' | 'zoomIn' | 'slideUp' | 'scale';
+type RevealVariant =
+  | "fadeIn"
+  | "fadeInUp"
+  | "fadeInDown"
+  | "fadeInLeft"
+  | "fadeInRight"
+  | "zoomIn"
+  | "stagger";
 
 interface ScrollRevealProps {
   children: ReactNode;
-  variant?: AnimationVariant;
+  variant?: RevealVariant;
   delay?: number;
   duration?: number;
   threshold?: number;
-  className?: string;
   once?: boolean;
+  className?: string;
+  custom?: any;
 }
 
 const variants = {
+  hidden: {
+    opacity: 0,
+    y: 0,
+    x: 0,
+    scale: 1,
+  },
   fadeIn: {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 }
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+    },
   },
   fadeInUp: {
-    hidden: { opacity: 0, y: 75 },
-    visible: { opacity: 1, y: 0 }
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      y: { type: "spring", stiffness: 50 },
+    },
   },
   fadeInDown: {
-    hidden: { opacity: 0, y: -75 },
-    visible: { opacity: 1, y: 0 }
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      y: { type: "spring", stiffness: 50 },
+    },
   },
   fadeInLeft: {
-    hidden: { opacity: 0, x: -75 },
-    visible: { opacity: 1, x: 0 }
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.6,
+      x: { type: "spring", stiffness: 50 },
+    },
   },
   fadeInRight: {
-    hidden: { opacity: 0, x: 75 },
-    visible: { opacity: 1, x: 0 }
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.6,
+      x: { type: "spring", stiffness: 50 },
+    },
   },
   zoomIn: {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1 }
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      scale: { type: "spring", stiffness: 50 },
+    },
   },
-  slideUp: {
-    hidden: { y: 100, opacity: 0 },
-    visible: { y: 0, opacity: 1 }
-  },
-  scale: {
-    hidden: { scale: 0.8, opacity: 0 },
-    visible: { scale: 1, opacity: 1 }
-  }
+  stagger: (custom: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      delay: custom * 0.1,
+    },
+  }),
+};
+
+const hiddenVariants = {
+  fadeIn: { opacity: 0 },
+  fadeInUp: { opacity: 0, y: 40 },
+  fadeInDown: { opacity: 0, y: -40 },
+  fadeInLeft: { opacity: 0, x: -40 },
+  fadeInRight: { opacity: 0, x: 40 },
+  zoomIn: { opacity: 0, scale: 0.9 },
+  stagger: { opacity: 0, y: 40 },
 };
 
 export default function ScrollReveal({
   children,
-  variant = 'fadeInUp',
+  variant = "fadeIn",
   delay = 0,
-  duration = 0.6,
-  threshold = 0.1,
-  className = '',
-  once = true
+  duration = 0.5,
+  threshold = 0.2,
+  once = true,
+  className = "",
+  custom,
 }: ScrollRevealProps) {
-  const controls = useAnimation();
-  const [ref, inView] = useInView({
-    triggerOnce: once,
-    threshold
-  });
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once, amount: threshold });
 
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible');
-    } else if (!once) {
-      controls.start('hidden');
+  const getHiddenVariant = () => {
+    return hiddenVariants[variant] || hiddenVariants.fadeIn;
+  };
+
+  const getVisibleVariant = (): Variant => {
+    if (variant === "stagger" && custom !== undefined) {
+      return variants.stagger(custom);
     }
-  }, [controls, inView, once]);
+    return variants[variant] || variants.fadeIn;
+  };
+
+  const getTransition = () => {
+    const baseTransition = { delay, duration };
+    return variant === "stagger" ? undefined : baseTransition;
+  };
 
   return (
     <motion.div
       ref={ref}
       initial="hidden"
-      animate={controls}
-      variants={variants[variant]}
-      transition={{ duration, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      animate={isInView ? "visible" : "hidden"}
+      variants={{
+        hidden: getHiddenVariant(),
+        visible: getVisibleVariant(),
+      }}
+      transition={getTransition()}
       className={className}
     >
       {children}

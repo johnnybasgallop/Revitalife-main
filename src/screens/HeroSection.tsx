@@ -8,22 +8,28 @@ import ScrollReveal from "../components/ScrollReveal";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
-
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
   });
 
-  // Parallax and opacity animations based on scroll
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.7, 0.9]);
-  const titleY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
-  const subtitleY = useTransform(scrollYProgress, [0, 0.5], [0, 150]);
-  const buttonY = useTransform(scrollYProgress, [0, 0.5], [0, 200]);
-  const indicatorY = useTransform(scrollYProgress, [0, 0.5], [0, 50]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
+  // Parallax effect for background zoom
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+
+  // Dynamic dark overlay that gets more opaque as you scroll
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.8], [0.3, 0.7]);
+
+  // Title and subtitle movement
+  const titleY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const subtitleY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const buttonY = useTransform(scrollYProgress, [0, 1], [0, -60]);
 
   return (
-    <section ref={sectionRef} className="relative min-h-[100vh] w-full flex items-center overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+    >
       {/* Background image with parallax effect */}
       <motion.div
         className="absolute inset-0"
@@ -81,23 +87,28 @@ export function HeroSection() {
             </Button>
           </motion.div>
         </ScrollReveal>
-
-        {/* Circular indicator with pulse animation */}
-        <motion.div
-          className="h-12 w-12 border-2 border-amber-500 rounded-full mt-16 flex items-center justify-center"
-          style={{ y: indicatorY }}
-          animate={{
-            boxShadow: ["0 0 0 0 rgba(251, 191, 36, 0.4)", "0 0 0 10px rgba(251, 191, 36, 0)"]
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            repeatType: "loop"
-          }}
-        >
-          <div className="h-8 w-8 bg-amber-500 rounded-full"></div>
-        </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
+        animate={{ y: [0, 10, 0] }}
+        transition={{
+          repeat: Infinity,
+          duration: 2
+        }}
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="text-white opacity-80"
+        >
+          <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </motion.div>
     </section>
   );
 }

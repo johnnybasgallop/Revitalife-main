@@ -1,25 +1,136 @@
 "use client";
 
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import ParallaxImage from "../components/ParallaxImage";
+import ScrollReveal from "../components/ScrollReveal";
 
 export function AboutSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Parallax effects for different elements
+  const imageX = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const contentX = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+  const decorationScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.2, 0.9]);
+  const decorationRotate = useTransform(scrollYProgress, [0, 1], [0, 15]);
+
   return (
-    <section id="about" className="py-20 bg-emerald-50">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            Our Mission
-          </h2>
-          <div className="text-lg text-gray-700 space-y-4">
-            <p>
-              "I created Revitalife after years of seeing patients struggle to get the nutrients they needed from their modern diets. Our mission is simple: to make complete daily nutrition accessible, convenient, and actually enjoyable.
-            </p>
-            <p>
-              Each ingredient in our formula was selected based on scientific research and traditional wellness practices. We're committed to using only the highest quality, sustainably sourced ingredients, with full transparency about what goes into each package.
-            </p>
-            <p>
-              Revitalife isn't just a supplement – it's a daily ritual that empowers you to take control of your health journey."
-            </p>
-          </div>
+    <section
+      id="about"
+      ref={sectionRef}
+      className="py-24 lg:py-32 bg-gradient-to-b from-white to-emerald-50 overflow-hidden relative"
+    >
+      {/* Decorative elements */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-32 bg-[url('/patterns/wave-pattern.svg')] bg-repeat-x"
+        style={{ y: useTransform(scrollYProgress, [0, 1], [0, -50]) }}
+      />
+
+      <motion.div
+        className="absolute -bottom-16 right-0 w-64 h-64 rounded-full bg-amber-50/60 blur-2xl"
+        style={{
+          scale: decorationScale,
+          rotate: decorationRotate
+        }}
+      />
+
+      <div className="container mx-auto px-4 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Left side - Image with parallax */}
+          <motion.div style={{ x: imageX }} className="relative">
+            <ScrollReveal variant="fadeInLeft" duration={1}>
+              <div className="relative h-[500px] w-full rounded-lg overflow-hidden shadow-xl">
+                <ParallaxImage
+                  src="/about-image/lab-testing.jpg"
+                  alt="Revitalife quality testing"
+                  priority
+                  direction="right"
+                  speed={0.2}
+                />
+
+                {/* Floating caption */}
+                <motion.div
+                  className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg max-w-[260px]"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  viewport={{ once: true }}
+                >
+                  <p className="text-sm text-gray-700">
+                    Every batch of Revitalife undergoes rigorous quality testing to ensure purity and potency
+                  </p>
+                </motion.div>
+              </div>
+            </ScrollReveal>
+          </motion.div>
+
+          {/* Right side - Content with parallax */}
+          <motion.div style={{ x: contentX }} className="relative">
+            <ScrollReveal variant="fadeInRight" duration={1}>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Try out our new App
+              </h2>
+
+              <div className="space-y-6 text-gray-700">
+                <p>
+                  At Revitalife, we belive that longevitiy matters, so try out or new yoga wellness application to help you live your best life.
+                </p>
+
+                <div className="pl-4 border-l-4 border-emerald-400">
+                  <p className="italic text-gray-600">
+                    "The revitalife app is a great way to stay on top of your health and wellness."
+                  </p>
+                </div>
+
+                <p>
+                  With over 1000+ yoga classes, you'll be sure to find something that works for you.
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <div className="text-emerald-500 mb-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium">Simple Signup</h3>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <div className="text-emerald-500 mb-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium">1000+ Yoga Classes</h3>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <div className="text-emerald-500 mb-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium">Detailed Tutorials</h3>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <div className="text-emerald-500 mb-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium">24/7 Support</h3>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </motion.div>
         </div>
       </div>
     </section>
