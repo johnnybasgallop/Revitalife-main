@@ -17,7 +17,7 @@ export function HeroSection() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
 
   // Dynamic dark overlay that gets more opaque as you scroll
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.8], [0.3, 0.7]);
+  const overlayOpacity = useTransform(scrollYProgress, [1, 1], [0.3, 0.7]);
 
   // Title and subtitle movement
   const titleY = useTransform(scrollYProgress, [0, 1], [0, -100]);
