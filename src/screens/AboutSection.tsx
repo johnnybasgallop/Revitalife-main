@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
 import { useRef } from "react";
-import ParallaxImage from "../components/ParallaxImage";
 import ScrollReveal from "../components/ScrollReveal";
 
 export function AboutSection() {
@@ -44,27 +44,32 @@ export function AboutSection() {
           {/* Left side - Image with parallax */}
           <motion.div style={{ x: imageX }} className="relative">
             <ScrollReveal variant="fadeInLeft" duration={1}>
-              <div className="relative h-[500px] w-full rounded-lg overflow-hidden shadow-xl">
-                <ParallaxImage
-                  src="/about-image/lab-testing.jpg"
-                  alt="Revitalife quality testing"
-                  priority
-                  direction="right"
-                  speed={0.2}
-                />
+              <div className="bg-white rounded-2xl shadow-lg p-8 flex items-center justify-center relative overflow-hidden h-[500px]">
+                {/* Subtle gradient accents */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-b from-emerald-50 to-transparent rounded-full opacity-70 -z-10"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-amber-50/40 to-transparent rounded-full opacity-70 -z-10"></div>
 
-                {/* Floating caption */}
-                <motion.div
-                  className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg max-w-[260px]"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <p className="text-sm text-gray-700">
-                    Every batch of Revitalife undergoes rigorous quality testing to ensure purity and potency
-                  </p>
-                </motion.div>
+                <Image
+                  src="/Yoga.png"
+                  alt="Revitalife Greens Powder"
+                  width={600}
+                  height={600}
+                  className="w-auto h-auto max-h-[100%] object-fill"
+                />
+                <Image
+                  src="/Yoga.png"
+                  alt="Revitalife Greens Powder"
+                  width={600}
+                  height={600}
+                  className="w-auto h-auto max-h-[100%] object-fill"
+                />
+                <Image
+                  src="/Yoga.png"
+                  alt="Revitalife Greens Powder"
+                  width={600}
+                  height={600}
+                  className="w-auto h-auto max-h-[100%] object-fill"
+                />
               </div>
             </ScrollReveal>
           </motion.div>

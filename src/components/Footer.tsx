@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="bg-gradient-to-b from-white via-emerald-50/30 to-gray-900 pt-24 pb-8 snap-start snap-always">
+    <footer className=" pt-24 pb-8 snap-start snap-always">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
