@@ -36,7 +36,9 @@ export function HeroSection() {
         style={{ scale }}
       >
         <Image
-          src="/hero-image/Runway 2025-04-24T18_55_58.805Z Expand Image.jpg"
+          // src="/hero-image/Runway 2025-04-24T18_55_58.805Z Expand Image.jpg"
+          // src="/Product-Double.jpg"
+          src="/hero-image/hero-revita.png"
           alt="Green background"
           fill
           priority
@@ -47,13 +49,13 @@ export function HeroSection() {
 
       {/* Dark overlay with dynamic opacity */}
       <motion.div
-        className="absolute inset-0 bg-black"
+        className="absolute inset-0 bg-black backdrop-blur-3xl"
         style={{ opacity: overlayOpacity, zIndex: 2 }}
       ></motion.div>
 
       {/* Content with staggered animations */}
       <div
-        className="container mx-auto px-4 py-20 flex flex-col items-center text-center relative"
+        className="container mx-auto mb-15 px-4 py-20 flex flex-col items-center text-center relative"
         style={{ zIndex: 3 }}
       >
         <ScrollReveal variant="fadeInDown" duration={0.8}>
