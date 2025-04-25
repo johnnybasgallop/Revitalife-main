@@ -35,7 +35,7 @@ export function BuySection() {
     <section
       id="buy"
       ref={sectionRef}
-      className="relative min-h-[95vh] flex items-center py-24 lg:py-32 bg-gradient-to-b from-white to-emerald-50 overflow-hidden"
+      className="relative min-h-[95vh] flex items-center py-24 lg:py-32 bg-white overflow-hidden"
     >
       {/* Decorative elements with parallax motion */}
       <motion.div
@@ -67,7 +67,12 @@ export function BuySection() {
 
       <div className="w-full container mx-auto px-4">
         <ScrollReveal variant="fadeIn" duration={1}>
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10 lg:p-16 min-h-[600px] border border-gray-100">
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10 lg:p-16 min-h-[600px] border border-gray-100 relative overflow-hidden">
+            {/* Subtle gradient accents */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-50 to-transparent rounded-full opacity-80 -z-10"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-50/50 to-transparent rounded-full opacity-80 -z-10"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-96 bg-gradient-to-r from-emerald-50/30 via-transparent to-blue-50/30 rounded-full blur-3xl opacity-50 -z-10"></div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center h-full">
               <div ref={productRef} className="relative flex justify-center items-center">
                 <motion.div

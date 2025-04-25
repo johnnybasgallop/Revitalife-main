@@ -1,10 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import { testimonials } from "../data/siteData";
 
 export function TestimonialsSection() {
+  const ref = useRef(null);
+
   return (
-    <section className="py-20 bg-white">
+    <section ref={ref} id="testimonials" className="py-24 bg-white overflow-hidden relative snap-start snap-always">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
