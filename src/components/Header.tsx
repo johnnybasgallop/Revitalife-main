@@ -1,12 +1,28 @@
 "use client";
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from './Button';
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const { scrollY } = useScroll();
+
+  // Transform header opacity based on scroll position
+  const headerBgOpacity = useTransform(scrollY, [0, 100], [0, 1]);
+  const headerBlur = useTransform(scrollY, [0, 100], [0, 8]);
+
+  // Update scroll state for non-framer elements
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -58,8 +74,16 @@ export function Header() {
   };
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 bg-transparent">
-      <div className="container mx-auto px-4 py-6 flex w-full justify-around items-center">
+    <header className="bg-emerald-950/80 backdrop-blur-md md:backdrop-blur-xs md:absolute md:bg-black/0 fixed md:top-0 top-0 left-0 right-0 z-50 transition-all duration-300">
+    <motion.div
+        className="absolute inset-0 bg-emerald-950/93 -z-10"
+        style={{
+          opacity: 0,
+          backdropFilter: `blur(${headerBlur.get()}px)`
+        }}
+      />
+
+      <div className={`container mx-auto px-4 py-4 md:mt-4 md:py-6 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-6' : 'py-4 md:py-6'}`}>
         <div className="flex w-full">
           <Link href="/" className="flex items-center">
             <span className="text-2xl font-semibold text-white">Revitalife</span>
@@ -129,7 +153,7 @@ export function Header() {
             />
 
             <motion.div
-              className="fixed inset-x-0 top-0 mt-20 p-4 bg-emerald-900/95 backdrop-blur-md rounded-b-2xl z-40 shadow-xl"
+              className="fixed inset-x-0 top-0 mt-16 p-4 bg-emerald-900/95 backdrop-blur-md rounded-b-2xl z-40 shadow-xl"
               initial="closed"
               animate="open"
               exit="closed"
