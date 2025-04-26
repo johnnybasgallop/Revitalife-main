@@ -8,7 +8,7 @@ export default function BuyNowPage() {
   return (
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow pt-24">
+      <main className="flex-grow md:pt-24">
         <BuySection />
       </main>
       <Footer />

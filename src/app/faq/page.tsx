@@ -8,7 +8,7 @@ export default function FAQPage() {
   return (
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow pt-24">
+      <main className="flex-grow pt-10 md:pt-24">
         <FAQSection />
       </main>
       <Footer />
