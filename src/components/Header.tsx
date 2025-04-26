@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -102,10 +103,16 @@ export function Header() {
         }}
       />
 
-      <div className={`container mx-auto px-4 py-4 md:mt-0 md:py-6 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-6' : 'py-4 md:py-6'}`}>
+      <div className={`container mx-auto px-4 py-4 md:mt-0 md:py-0 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-3' : 'py-4 md:py-3'}`}>
         <div className="flex w-full">
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-semibold text-white">Revitalife</span>
+            <Image
+              src="/Logo.png"
+              alt="Revitalife Logo"
+              width={400}
+              height={30}
+              className="h-13 w-auto ml-2 md:ml-0 md:h-20 md:w-26"
+            />
           </Link>
         </div>
 
