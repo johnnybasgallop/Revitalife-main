@@ -79,10 +79,10 @@ export function Header() {
 
   // Navigation items
   const navItems = [
-    { href: isHomePage ? "#buy" : "/buy-now", label: "Buy now" },
-    { href: isHomePage ? "#ingredients" : "/ingredients", label: "Ingredients" },
-    { href: isHomePage ? "#faq" : "/faq", label: "FAQ" },
-    { href: isHomePage ? "#app" : "/our-app", label: "Our App" }
+    { href: "/buy-now", label: "Buy now" },
+    { href: "/ingredients", label: "Ingredients" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/our-app", label: "Our App" }
   ];
 
   // Handle navigation based on current page
@@ -103,7 +103,7 @@ export function Header() {
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-2 md:py-0 flex items-center justify-between transition-all duration-300">
+      <div className="container mx-auto px-4 md:px-8 py-2 md:py-3 flex items-center justify-between transition-all duration-300">
         {/* Logo */}
         <div className="flex-shrink-0 md:w-1/4">
           <Link href="/" className="flex items-center">
