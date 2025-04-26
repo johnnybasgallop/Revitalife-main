@@ -95,7 +95,7 @@ export function Header() {
 
   return (
     <header className="bg-emerald-950/90 backdrop-blur-md md:backdrop-blur-xs md:absolute fixed md:top-0 top-0 left-0 right-0 z-50 transition-all duration-300">
-    <motion.div
+      <motion.div
         className="absolute inset-0 bg-emerald-950/93 -z-10"
         style={{
           opacity: 0,
@@ -103,40 +103,45 @@ export function Header() {
         }}
       />
 
-      <div className={`container mx-auto 2xl:mx-0 px-4 py-4 md:mt-0 md:py-0 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-3' : 'py-4 md:py-3'}`}>
-        <div className="flex w-full">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-2 md:py-0 flex items-center justify-between transition-all duration-300">
+        {/* Logo */}
+        <div className="flex-shrink-0 md:w-1/4">
           <Link href="/" className="flex items-center">
             <Image
               src="/Logo.png"
               alt="Revitalife Logo"
-              width={400}
+              width={250}
               height={30}
-              className="h-13 w-auto ml-2 md:ml-0 md:h-20 md:w-26"
+              className="h-12 md:h-20 w-auto"
+              priority
             />
           </Link>
         </div>
 
-        <nav className="hidden md:flex md:w-full items-center justify-center">
-          <div className="flex space-x-7">
+        {/* Navigation - Desktop */}
+        <nav className="hidden md:flex justify-center flex-grow">
+          <ul className="flex items-center space-x-10">
             {navItems.map((item, index) => (
-              <Link
-                key={index}
-                href={item.href}
-                className="text-white hover:text-amber-400 transition-colors"
-                onClick={(e) => {
-                  if (isHomePage && item.href.startsWith('#')) {
-                    e.preventDefault();
-                    handleNavigation(item.href);
-                  }
-                }}
-              >
-                {item.label}
-              </Link>
+              <li key={index}>
+                <Link
+                  href={item.href}
+                  className="whitespace-nowrap text-base font-medium text-white hover:text-amber-400 transition-colors"
+                  onClick={(e) => {
+                    if (isHomePage && item.href.startsWith('#')) {
+                      e.preventDefault();
+                      handleNavigation(item.href);
+                    }
+                  }}
+                >
+                  {item.label}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </nav>
 
-        <div className="flex w-full justify-end">
+        {/* Button and Mobile Menu Toggle */}
+        <div className="flex-shrink-0 md:w-1/4 flex justify-end">
           <Button
             variant="primary"
             size="sm"
@@ -147,7 +152,7 @@ export function Header() {
                 window.location.href = '/buy-now';
               }
             }}
-            className="hidden md:block py-3 px-6"
+            className="hidden md:block py-3 px-8"
           >
             Shop Now
           </Button>
