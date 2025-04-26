@@ -103,7 +103,7 @@ export function Header() {
         }}
       />
 
-      <div className={`container mx-auto px-4 py-4 md:mt-0 md:py-0 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-3' : 'py-4 md:py-3'}`}>
+      <div className={`container mx-auto 2xl:mx-0 px-4 py-4 md:mt-0 md:py-0 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-3' : 'py-4 md:py-3'}`}>
         <div className="flex w-full">
           <Link href="/" className="flex items-center">
             <Image
