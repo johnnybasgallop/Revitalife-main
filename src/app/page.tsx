@@ -1,9 +1,9 @@
 "use client";
 
+import { OurApp } from "@/screens/OurApp";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import {
-  AboutSection,
   BuySection,
   FAQSection,
   HeroSection,
@@ -20,9 +20,9 @@ export default function Home() {
           <HeroSection />
           <BuySection />
           <IngredientsSection />
-          <FAQSection />
-          <AboutSection />
           <TestimonialsSection />
+          <OurApp />
+          <FAQSection />
         </main>
       </div>
       <Footer />

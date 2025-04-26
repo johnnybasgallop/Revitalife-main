@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import ScrollReveal from "../components/ScrollReveal";
 
-export function AboutSection() {
+export function OurApp() {
   const sectionRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -21,7 +21,7 @@ export function AboutSection() {
 
   return (
     <section
-      id="about"
+      id="app"
       ref={sectionRef}
       className="py-24 lg:py-32 bg-white overflow-hidden relative"
     >

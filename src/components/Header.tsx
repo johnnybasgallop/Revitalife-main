@@ -6,31 +6,32 @@ import { Button } from './Button';
 export function Header() {
   return (
     <header className="absolute top-0 left-0 right-0 z-50 bg-transparent">
-      <div className="container mx-auto px-4 py-6 flex items-center">
-        <div className="flex-1">
+      <div className="container mx-auto px-4 py-6 flex w-full justify-around items-center">
+        <div className="flex w-full">
           <Link href="/" className="flex items-center">
             <span className="text-2xl font-semibold text-white">Revitalife</span>
           </Link>
         </div>
 
-        <nav className="hidden md:flex items-center justify-center flex-1">
-          <div className="flex space-x-10">
+        <nav className="hidden md:flex md:w-full items-center justify-center">
+          <div className="flex space-x-7">
+            <Link href="#buy" className="text-white hover:text-amber-400 transition-colors">
+              Buy now
+            </Link>
             <Link href="#ingredients" className="text-white hover:text-amber-400 transition-colors">
-              About
+              Ingredients
             </Link>
-            <Link href="#benefits" className="text-white hover:text-amber-400 transition-colors">
-              Impact
-            </Link>
-            <Link href="#about" className="text-white hover:text-amber-400 transition-colors">
-              Mission
-            </Link>
+
             <Link href="#faq" className="text-white hover:text-amber-400 transition-colors">
               FAQ
+            </Link>
+            <Link href="#app" className="text-white hover:text-amber-400 transition-colors">
+              Our App
             </Link>
           </div>
         </nav>
 
-        <div className="flex-1 flex justify-end">
+        <div className="flex w-full justify-end">
           <Button
             variant="primary"
             size="sm"
