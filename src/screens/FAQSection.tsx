@@ -7,7 +7,7 @@ export function FAQSection() {
   return (
     <section
       id="faq"
-      className="py-15 lg:pt-20 lg:pb-50 bg-white overflow-hidden relative snap-start snap-always"
+      className="py-15 min-h-[95vh] lg:pt-20 lg:pb-50 bg-white overflow-hidden relative snap-start snap-always"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">

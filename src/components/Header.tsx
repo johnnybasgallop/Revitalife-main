@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from './Button';
 
@@ -9,6 +10,8 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const { scrollY } = useScroll();
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
 
   // Transform header opacity based on scroll position
   const headerBgOpacity = useTransform(scrollY, [0, 100], [0, 1]);
@@ -73,8 +76,24 @@ export function Header() {
     open: {}
   };
 
+  // Navigation items
+  const navItems = [
+    { href: isHomePage ? "#buy" : "/buy-now", label: "Buy now" },
+    { href: isHomePage ? "#ingredients" : "/ingredients", label: "Ingredients" },
+    { href: isHomePage ? "#faq" : "/faq", label: "FAQ" },
+    { href: isHomePage ? "#app" : "/our-app", label: "Our App" }
+  ];
+
+  // Handle navigation based on current page
+  const handleNavigation = (href: string) => {
+    if (isHomePage && href.startsWith('#')) {
+      document.getElementById(href.substring(1))?.scrollIntoView({ behavior: 'smooth' });
+      if (isMobileMenuOpen) toggleMobileMenu();
+    }
+  };
+
   return (
-    <header className="bg-emerald-950/80 backdrop-blur-md md:backdrop-blur-xs md:absolute md:bg-black/0 fixed md:top-0 top-0 left-0 right-0 z-50 transition-all duration-300">
+    <header className="bg-emerald-950/90 backdrop-blur-md md:backdrop-blur-xs md:absolute fixed md:top-0 top-0 left-0 right-0 z-50 transition-all duration-300">
     <motion.div
         className="absolute inset-0 bg-emerald-950/93 -z-10"
         style={{
@@ -83,7 +102,7 @@ export function Header() {
         }}
       />
 
-      <div className={`container mx-auto px-4 py-4 md:mt-4 md:py-6 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-6' : 'py-4 md:py-6'}`}>
+      <div className={`container mx-auto px-4 py-4 md:mt-0 md:py-6 flex w-full justify-around items-center transition-all duration-300 ${hasScrolled ? 'py-3 md:py-6' : 'py-4 md:py-6'}`}>
         <div className="flex w-full">
           <Link href="/" className="flex items-center">
             <span className="text-2xl font-semibold text-white">Revitalife</span>
@@ -92,18 +111,21 @@ export function Header() {
 
         <nav className="hidden md:flex md:w-full items-center justify-center">
           <div className="flex space-x-7">
-            <Link href="#buy" className="text-white hover:text-amber-400 transition-colors">
-              Buy now
-            </Link>
-            <Link href="#ingredients" className="text-white hover:text-amber-400 transition-colors">
-              Ingredients
-            </Link>
-            <Link href="#faq" className="text-white hover:text-amber-400 transition-colors">
-              FAQ
-            </Link>
-            <Link href="#app" className="text-white hover:text-amber-400 transition-colors">
-              Our App
-            </Link>
+            {navItems.map((item, index) => (
+              <Link
+                key={index}
+                href={item.href}
+                className="text-white hover:text-amber-400 transition-colors"
+                onClick={(e) => {
+                  if (isHomePage && item.href.startsWith('#')) {
+                    e.preventDefault();
+                    handleNavigation(item.href);
+                  }
+                }}
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </nav>
 
@@ -111,7 +133,13 @@ export function Header() {
           <Button
             variant="primary"
             size="sm"
-            onClick={() => document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => {
+              if (isHomePage) {
+                document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                window.location.href = '/buy-now';
+              }
+            }}
             className="hidden md:block py-3 px-6"
           >
             Shop Now
@@ -160,17 +188,19 @@ export function Header() {
               variants={menuVariants}
             >
               <div className="flex flex-col items-center space-y-6 py-6">
-                {[
-                  { href: "#buy", label: "Buy now" },
-                  { href: "#ingredients", label: "Ingredients" },
-                  { href: "#faq", label: "FAQ" },
-                  { href: "#app", label: "Our App" }
-                ].map((item, index) => (
+                {navItems.map((item, index) => (
                   <motion.div key={index} variants={itemVariants}>
                     <Link
                       href={item.href}
                       className="text-xl font-medium text-white hover:text-amber-400 transition-colors"
-                      onClick={toggleMobileMenu}
+                      onClick={(e) => {
+                        if (isHomePage && item.href.startsWith('#')) {
+                          e.preventDefault();
+                          handleNavigation(item.href);
+                        } else {
+                          toggleMobileMenu();
+                        }
+                      }}
                     >
                       {item.label}
                     </Link>
@@ -182,7 +212,11 @@ export function Header() {
                     variant="primary"
                     size="lg"
                     onClick={() => {
-                      document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' });
+                      if (isHomePage) {
+                        document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' });
+                      } else {
+                        window.location.href = '/buy-now';
+                      }
                       toggleMobileMenu();
                     }}
                     className="py-3 px-6 bg-amber-500 hover:bg-amber-600"

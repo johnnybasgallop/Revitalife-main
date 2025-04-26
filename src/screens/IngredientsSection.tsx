@@ -7,7 +7,7 @@ export function IngredientsSection() {
   return (
     <section
       id="ingredients"
-      className="py-24 bg-white overflow-hidden relative snap-start snap-always"
+      className="py-24  min-h-[95vh] bg-white overflow-hidden relative snap-start snap-always"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">

@@ -23,7 +23,7 @@ export function OurApp() {
     <section
       id="app"
       ref={sectionRef}
-      className="py-24 lg:py-32 bg-white overflow-hidden relative"
+      className="py-24 min-h-[95vh] lg:py-32 bg-white overflow-hidden relative"
     >
       {/* Decorative elements */}
       <motion.div

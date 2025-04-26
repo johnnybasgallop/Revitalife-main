@@ -45,3 +45,8 @@ body {
     padding-right: 4rem;
   }
 }
+
+/* Ensure all pages have a white background */
+html, body {
+  background-color: #ffffff;
+}
