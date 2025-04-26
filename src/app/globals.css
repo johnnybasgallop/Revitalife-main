@@ -4,6 +4,13 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+* {
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -41,8 +48,8 @@ body {
 
 @media (min-width: 1280px) {
   .container {
-    padding-left: 4rem;
-    padding-right: 4rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
 }
 
