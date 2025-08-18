@@ -8,13 +8,13 @@ import {
   FAQSection,
   HeroSection,
   IngredientsSection,
-  TestimonialsSection
+  TestimonialsSection,
 } from "../screens";
 
 export default function Home() {
   return (
     <>
-      <div className="relative">
+      <div className="">
         <Header />
         <main>
           <HeroSection />

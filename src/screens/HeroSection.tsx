@@ -31,10 +31,7 @@ export function HeroSection() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Background image with parallax effect */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ scale }}
-      >
+      <motion.div className="absolute inset-0" style={{ scale }}>
         <Image
           // src="/hero-image/Runway 2025-04-24T18_55_58.805Z Expand Image.jpg"
           // src="/Product-Double.jpg"
@@ -77,13 +74,14 @@ export function HeroSection() {
         </ScrollReveal>
 
         <ScrollReveal variant="zoomIn" delay={0.4} duration={0.8}>
-          <motion.div
-            className="mt-6"
-            style={{ y: buttonY }}
-          >
+          <motion.div className="mt-6" style={{ y: buttonY }}>
             <Button
               size="lg"
-              onClick={() => document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() =>
+                document
+                  .getElementById("buy")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               Shop Now
             </Button>
@@ -93,11 +91,11 @@ export function HeroSection() {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2  "
         animate={{ y: [0, 10, 0] }}
         transition={{
           repeat: Infinity,
-          duration: 2
+          duration: 2,
         }}
       >
         <svg
@@ -108,7 +106,13 @@ export function HeroSection() {
           xmlns="http://www.w3.org/2000/svg"
           className="text-white opacity-80"
         >
-          <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path
+            d="M12 5L12 19M12 19L19 12M12 19L5 12"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </motion.div>
     </section>
