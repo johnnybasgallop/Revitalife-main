@@ -160,7 +160,7 @@ export function Header() {
           />
 
           {/* Mobile row: hamburger / centered logo / icons */}
-          <div className="md:hidden grid grid-cols-3 items-center px-4 py-3">
+          <div className="lg:hidden grid grid-cols-3 items-center px-4 py-3">
             <button
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               onClick={toggleMobileMenu}
@@ -205,12 +205,12 @@ export function Header() {
                 alt="Revitalife Logo"
                 width={0}
                 height={0}
-                className="h-8 w-auto"
+                className="h-13 w-auto"
                 priority
               />
             </Link>
 
-            <div className="flex items-center space-x-4 justify-self-end">
+            <div className="flex items-center space-x-6 justify-self-end">
               <Link href="/search" aria-label="Search">
                 <IoSearch className="w-5 h-5" />
               </Link>
@@ -224,9 +224,9 @@ export function Header() {
           </div>
 
           {/* Desktop row */}
-          <div className="hidden md:flex px-4 md:px-8 py-2 md:py-3 items-center justify-between transition-all duration-300">
+          <div className="hidden lg:flex px-4 md:px-8 py-2 md:py-3 items-center justify-between transition-all duration-300">
             {/* Navigation - Desktop */}
-            <nav className="hidden md:flex justify-start w-1/3 px-4">
+            <nav className="hidden lg:flex justify-start w-1/3 px-4">
               <ul className="flex items-center space-x-10">
                 {navItems.map((item, index) => (
                   <li key={index}>
@@ -260,7 +260,7 @@ export function Header() {
               </Link>
             </div>
 
-            <nav className="hidden md:flex justify-end w-1/3 px-4">
+            <nav className="hidden lg:flex justify-end w-1/3 px-4">
               <ul className="flex items-center space-x-10">
                 {navIcons.map((item, index) => (
                   <li key={index}>

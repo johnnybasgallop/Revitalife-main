@@ -28,53 +28,56 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen md:min-h-[87vh] flex items-end justify-center md:items-center md:justify-start overflow-hidden"
     >
       {/* Background image with parallax effect */}
-      <motion.div className="absolute inset-0" style={{ scale }}>
+      <motion.div className="">
         <Image
           // src="/hero-image/Runway 2025-04-24T18_55_58.805Z Expand Image.jpg"
           // src="/Product-Double.jpg"
-          src="/hero-image/hero-revita.png"
+          src="/backdrop.webp"
           alt="Green background"
           fill
           priority
-          className="object-cover absolute inset-0"
+          className="object-cover 2xl:object-fill md:flex hidden"
           style={{ zIndex: 1 }}
         />
       </motion.div>
 
-      {/* Dark overlay with dynamic opacity */}
-      <motion.div
-        className="absolute inset-0 bg-black backdrop-blur-3xl"
-        style={{ opacity: overlayOpacity, zIndex: 2 }}
-      ></motion.div>
+      <motion.div className="">
+        <Image
+          // src="/hero-image/Runway 2025-04-24T18_55_58.805Z Expand Image.jpg"
+          // src="/Product-Double.jpg"
+          src="/mobile-backdrop.png"
+          alt="Green background"
+          fill
+          priority
+          className="object-cover max-h-[87vh] 2xl:object-fill md:hidden flex"
+          style={{ zIndex: 1 }}
+        />
+      </motion.div>
 
       {/* Content with staggered animations */}
       <div
-        className="container mx-auto mb-15 px-4 py-20 flex flex-col items-center text-center relative"
+        className="mb-15 px-12 pb-30 md:py-20 flex flex-col items-start"
         style={{ zIndex: 3 }}
       >
         <ScrollReveal variant="fadeInDown" duration={0.8}>
-          <motion.h1
-            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6"
-            style={{ y: titleY }}
-          >
-            ESSENTIAL GREENS BLEND
+          <motion.h1 className="text-4xl md:text-6xl lg:text-7xl 2xl:text-8xl text-[#504C4B] font-semibold mb-6 leading-12 md:leading-20 lg:leading-27 2xl:leading-33">
+            Essential Greens
+            <br />
+            Blend
           </motion.h1>
         </ScrollReveal>
 
         <ScrollReveal variant="fadeInUp" delay={0.2} duration={0.8}>
-          <motion.p
-            className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl"
-            style={{ y: subtitleY }}
-          >
-            22 superfoods for daily wellness in one delicious scoop
+          <motion.p className="text-xl md:text-4xl font-bold text-[#504C4B]/85  px-2 mt-0 mb-4 md:mb-15 max-w-2xl">
+            22 Superfoods
           </motion.p>
         </ScrollReveal>
 
         <ScrollReveal variant="zoomIn" delay={0.4} duration={0.8}>
-          <motion.div className="mt-6" style={{ y: buttonY }}>
+          <motion.div className="mt-5 min-w-[300px]" style={{ y: buttonY }}>
             <Button
               size="lg"
               onClick={() =>
@@ -82,6 +85,7 @@ export function HeroSection() {
                   .getElementById("buy")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
+              className="w-full"
             >
               Shop Now
             </Button>
@@ -91,7 +95,7 @@ export function HeroSection() {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2  "
+        className=" "
         animate={{ y: [0, 10, 0] }}
         transition={{
           repeat: Infinity,

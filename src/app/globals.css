@@ -48,17 +48,15 @@ body {
 
 @media (min-width: 1280px) {
   .container {
-    padding-left: 4rem;
-    padding-right: 4rem;
+    padding-left: 0rem;
+    padding-right: 0rem;
   }
 }
 
 @media (min-width: 1920px) {
   .container {
-    padding-left: 0rem;
-    padding-right: 0rem;
-    margin-left: auto;
-    margin-right: auto;
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
 }
 
