@@ -8,6 +8,10 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { IoSearch } from "react-icons/io5";
+import { MdOutlinePersonOutline } from "react-icons/md";
+import { TbShoppingBag } from "react-icons/tb";
+
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "./Button";
@@ -90,6 +94,16 @@ export function Header() {
     { href: "/our-app", label: "Our App" },
   ];
 
+  // Navigation items
+  const navIcons = [
+    { href: "/search", label: <IoSearch className="w-5 h-10" /> },
+    {
+      href: "/account",
+      label: <MdOutlinePersonOutline className="w-5 h-10" />,
+    },
+    { href: "/basket", label: <TbShoppingBag className="w-5 h-10" /> },
+  ];
+
   // Marquee items (single source of truth)
   const marqueeItems = [
     "Free UK Shipping on orders over £35",
@@ -100,7 +114,10 @@ export function Header() {
 
   // Build one segment with consistent spacers between items and a trailing spacer
   const marqueeItemsWithSpacers = marqueeItems.flatMap((text, idx) => [
-    <span key={`msg-${idx}`} className="whitespace-nowrap">
+    <span
+      key={`msg-${idx}`}
+      className="whitespace-nowrap text-black font-regular"
+    >
       {text}
     </span>,
     <span
@@ -123,7 +140,7 @@ export function Header() {
   return (
     <div className="flex flex-col">
       {/* Scrolling announcement bar (3 items per loop, seamless) */}
-      <div className="w-full bg-[#bdc68b] h-10 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
+      <div className="w-full bg-[#bdc68b] h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
         <motion.div
           className="flex flex-none"
           animate={{ x: ["0%", "-50%"] }}
@@ -138,7 +155,7 @@ export function Header() {
         </motion.div>
       </div>
 
-      <header className="bg-emerald-950/90 backdrop-blur-md md:backdrop-blur-xs transition-all duration-300">
+      <header className="bg-white text-black backdrop-blur-md md:backdrop-blur-xs transition-all duration-300">
         <motion.div
           className="absolute inset-0 bg-emerald-950/93 -z-10"
           style={{
@@ -147,29 +164,17 @@ export function Header() {
           }}
         />
 
-        <div className="container mx-auto px-4 md:px-8 py-2 md:py-3 flex items-center justify-between transition-all duration-300">
+        <div className="px-4 md:px-8 py-2 md:py-3 flex items-center justify-between transition-all duration-300">
           {/* Logo */}
-          <div className="flex-shrink-0 md:w-1/4">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/Logo.png"
-                alt="Revitalife Logo"
-                width={250}
-                height={30}
-                className="h-12 md:h-20 w-auto"
-                priority
-              />
-            </Link>
-          </div>
 
           {/* Navigation - Desktop */}
-          <nav className="hidden md:flex justify-center flex-grow">
+          <nav className="hidden md:flex justify-start w-1/3 px-4">
             <ul className="flex items-center space-x-10">
               {navItems.map((item, index) => (
                 <li key={index}>
                   <Link
                     href={item.href}
-                    className="whitespace-nowrap text-base font-medium text-white hover:text-amber-400 transition-colors"
+                    className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
                     onClick={(e) => {
                       if (isHomePage && item.href.startsWith("#")) {
                         e.preventDefault();
@@ -184,66 +189,39 @@ export function Header() {
             </ul>
           </nav>
 
-          {/* Button and Mobile Menu Toggle */}
-          <div className="flex-shrink-0 md:w-1/4 flex justify-end">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                if (isHomePage) {
-                  document
-                    .getElementById("buy")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                } else {
-                  window.location.href = "/buy-now";
-                }
-              }}
-              className="hidden md:block py-3 px-8"
-            >
-              Shop Now
-            </Button>
-
-            <motion.button
-              className="md:hidden text-white hover:text-amber-400 transition-colors z-50"
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              onClick={toggleMobileMenu}
-              initial="closed"
-              animate={isMobileMenuOpen ? "open" : "closed"}
-              variants={burgerVariants}
-            >
-              {isMobileMenuOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-            </motion.button>
+          <div>
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/Logo.png"
+                alt="Revitalife Logo"
+                width={0}
+                height={0}
+                className="h-30 md:h-15 my-1 w-auto"
+                priority
+              />
+            </Link>
           </div>
+
+          <nav className="hidden md:flex justify-end w-1/3 px-4">
+            <ul className="flex items-center space-x-10">
+              {navIcons.map((item, index) => (
+                <li key={index}>
+                  <Link
+                    href={item.href}
+                    className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
+                    onClick={(e) => {
+                      if (isHomePage && item.href.startsWith("#")) {
+                        e.preventDefault();
+                        handleNavigation(item.href);
+                      }
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
 
         {/* Mobile menu */}
@@ -272,7 +250,7 @@ export function Header() {
                     <motion.div key={index} variants={itemVariants}>
                       <Link
                         href={item.href}
-                        className="text-xl font-medium text-white hover:text-amber-400 transition-colors"
+                        className="text-xl font-medium text-white hover:text-amber-500 transition-colors"
                         onClick={(e) => {
                           if (isHomePage && item.href.startsWith("#")) {
                             e.preventDefault();
