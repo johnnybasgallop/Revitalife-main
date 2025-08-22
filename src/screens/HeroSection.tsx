@@ -35,11 +35,11 @@ export function HeroSection() {
         <Image
           // src="/hero-image/Runway 2025-04-24T18_55_58.805Z Expand Image.jpg"
           // src="/Product-Double.jpg"
-          src="/backdrop.webp"
+          src="/backdrop5.png"
           alt="Green background"
           fill
           priority
-          className="object-cover 2xl:object-fill md:flex hidden"
+          className="object-cover md:flex hidden"
           style={{ zIndex: 1 }}
         />
       </motion.div>
@@ -63,7 +63,7 @@ export function HeroSection() {
         style={{ zIndex: 3 }}
       >
         <ScrollReveal variant="fadeInDown" duration={0.8}>
-          <motion.h1 className="text-4xl md:text-6xl lg:text-7xl 2xl:text-8xl text-[#504C4B] font-semibold mb-6 leading-12 md:leading-20 lg:leading-27 2xl:leading-33">
+          <motion.h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-[#504C4B] font-semibold mb-6 leading-12 md:leading-20 lg:leading-27 xl:leading-30">
             Essential Greens
             <br />
             Blend

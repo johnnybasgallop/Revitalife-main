@@ -45,7 +45,7 @@ export function BuySection() {
       ref={sectionRef}
       className="relative min-h-[95vh] flex items-center py-24 lg:py-32 bg-white overflow-hidden"
     >
-      {/* Decorative elements with parallax motion */}
+      {/* Decorative elements with parallax motion
       <motion.div
         className="absolute top-1/4 right-10 w-80 h-80 bg-green-100 rounded-full opacity-50 blur-3xl"
         style={{ y: decorationY1, x: decorationX1 }}
@@ -71,17 +71,13 @@ export function BuySection() {
           y: useTransform(scrollYProgress, [0, 1], [-20, 40]),
           scale: useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.2, 1]),
         }}
-      />
-
-      <div className="w-full container mx-auto px-4">
+      /> */}
+      <div className="w-full px-20">
         <ScrollReveal variant="fadeIn" duration={1}>
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10 lg:p-16 min-h-[600px] border border-gray-100 relative overflow-hidden">
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl flex items-center shadow-2xl p-10 lg:p-16 min-h-[650px] border border-gray-100 relative overflow-hidden">
             {/* Subtle gradient accents */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-50 to-transparent rounded-full opacity-80 - "></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-50/50 to-transparent rounded-full opacity-80 - "></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-96 bg-gradient-to-r from-emerald-50/30 via-transparent to-blue-50/30 rounded-full blur-3xl opacity-50 - "></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center h-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 xl:gap-50 pb-15 items-center h-full">
               <div
                 ref={productRef}
                 className="relative flex justify-center items-center"
