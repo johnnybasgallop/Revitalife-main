@@ -4,7 +4,6 @@ import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Button } from "../components/Button";
-import ParallaxImage from "../components/ParallaxImage";
 import ScrollReveal from "../components/ScrollReveal";
 
 export function BuySection() {
@@ -56,7 +55,7 @@ export function BuySection() {
     <section
       id="buy"
       ref={sectionRef}
-      className="relative min-h-[95vh] flex items-center py-24 lg:py-32 bg-white overflow-hidden"
+      className="relative min-h-[95vh] flex items-center pb-10 md:py-15 lg:py-32 bg-white overflow-hidden"
     >
       {/* Decorative elements with parallax motion
       <motion.div
@@ -85,12 +84,12 @@ export function BuySection() {
           scale: useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.2, 1]),
         }}
       /> */}
-      <div className="w-full px-20">
+      <div className="w-full px-4 md:px-10 lg:px-20">
         <ScrollReveal variant="fadeIn" duration={1}>
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl flex items-center shadow-2xl p-10 lg:p-16 min-h-[650px] border border-gray-100 relative overflow-hidden">
             {/* Subtle gradient accents */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 xl:gap-30 pb-15 items-center h-full w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-30 2xl:gap-40 pb-15 items-center h-full w-full">
               <div
                 ref={productRef}
                 className="relative flex justify-center items-center"
@@ -110,24 +109,19 @@ export function BuySection() {
                       transition={{ duration: 0.5, ease: "easeInOut" }}
                       className="w-full h-full"
                     >
-                      <ParallaxImage
+                      <img
                         src={productImages[currentImageIndex]}
                         alt={`Revitalife Greens Powder - Image ${
                           currentImageIndex + 1
                         }`}
-                        className="w-full h-full rounded-lg"
-                        fill={false}
-                        width={425}
-                        height={425}
-                        speed={0.1}
-                        direction="up"
+                        className="w-full h-full rounded-lg max-w-[400px] h-auto"
                       />
                     </motion.div>
 
                     {/* Navigation Arrows */}
                     <button
                       onClick={prevImage}
-                      className="absolute -left-30 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
+                      className="absolute -left-20 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
                       aria-label="Previous image"
                     >
                       <IoChevronBack className="w-6 h-6" />
@@ -135,7 +129,7 @@ export function BuySection() {
 
                     <button
                       onClick={nextImage}
-                      className="absolute -right-30 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
+                      className="absolute -right-20 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
                       aria-label="Next image"
                     >
                       <IoChevronForward className="w-6 h-6" />

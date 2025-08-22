@@ -59,7 +59,7 @@ export function HeroSection() {
 
       {/* Content with staggered animations */}
       <div
-        className="mb-15 px-12 pb-30 md:py-20 flex flex-col items-start"
+        className="mb-15 px-20 pb-30 md:py-20 flex flex-col items-start"
         style={{ zIndex: 3 }}
       >
         <ScrollReveal variant="fadeInDown" duration={0.8}>
