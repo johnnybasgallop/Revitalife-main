@@ -61,7 +61,7 @@ export function OurApp() {
     <section
       id="app"
       ref={sectionRef}
-      className="py-24 min-h-[95vh] lg:py-32 bg-white overflow-hidden relative"
+      className="py-24 min-h-[80vh] lg:py-40 bg-white overflow-hidden relative"
     >
       {/* Decorative elements - hidden on mobile */}
       {!isMobile && (
