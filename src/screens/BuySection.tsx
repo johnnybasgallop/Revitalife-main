@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Button } from "../components/Button";
 import ParallaxImage from "../components/ParallaxImage";
 import ScrollReveal from "../components/ScrollReveal";
@@ -9,6 +10,23 @@ import ScrollReveal from "../components/ScrollReveal";
 export function BuySection() {
   const sectionRef = useRef<HTMLElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const productImages = [
+    "/prod/prod1.png",
+    "/prod/prod2.jpg",
+    "/prod/prod3.jpg",
+  ];
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? productImages.length - 1 : prev - 1
+    );
+  };
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -20,11 +38,6 @@ export function BuySection() {
     scrollYProgress,
     [0, 0.3, 0.7, 1],
     [0.8, 1.05, 1.05, 0.9]
-  );
-  const productRotate = useTransform(
-    scrollYProgress,
-    [0, 0.3, 0.7, 1],
-    [-5, 2, 2, -3]
   );
   const decorationY1 = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const decorationY2 = useTransform(scrollYProgress, [0, 1], [0, -80]);
@@ -77,7 +90,7 @@ export function BuySection() {
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl flex items-center shadow-2xl p-10 lg:p-16 min-h-[650px] border border-gray-100 relative overflow-hidden">
             {/* Subtle gradient accents */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 xl:gap-50 pb-15 items-center h-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 xl:gap-30 pb-15 items-center h-full w-full">
               <div
                 ref={productRef}
                 className="relative flex justify-center items-center"
@@ -85,24 +98,65 @@ export function BuySection() {
                 <motion.div
                   style={{
                     scale: productScale,
-                    rotate: productRotate,
                   }}
-                  whileHover={{
-                    scale: 1.05,
-                    transition: { duration: 0.3 },
-                  }}
-                  className="relative max-w-lg mx-auto"
+                  className="relative"
                 >
-                  <ParallaxImage
-                    src="/Product-AI.png"
-                    alt="Revitalife Greens Powder"
-                    className="w-2/3 h-auto mx-auto"
-                    fill={false}
-                    width={500}
-                    height={500}
-                    speed={0.1}
-                    direction="up"
-                  />
+                  {/* Product Image Carousel */}
+                  <div className="relative w-full h-full">
+                    <motion.div
+                      key={currentImageIndex}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="w-full h-full"
+                    >
+                      <ParallaxImage
+                        src={productImages[currentImageIndex]}
+                        alt={`Revitalife Greens Powder - Image ${
+                          currentImageIndex + 1
+                        }`}
+                        className="w-full h-full rounded-lg"
+                        fill={false}
+                        width={425}
+                        height={425}
+                        speed={0.1}
+                        direction="up"
+                      />
+                    </motion.div>
+
+                    {/* Navigation Arrows */}
+                    <button
+                      onClick={prevImage}
+                      className="absolute -left-30 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
+                      aria-label="Previous image"
+                    >
+                      <IoChevronBack className="w-6 h-6" />
+                    </button>
+
+                    <button
+                      onClick={nextImage}
+                      className="absolute -right-30 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
+                      aria-label="Next image"
+                    >
+                      <IoChevronForward className="w-6 h-6" />
+                    </button>
+
+                    {/* Image Indicators */}
+                    <div className="absolute -bottom-15 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                      {productImages.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                            index === currentImageIndex
+                              ? "bg-amber-500 scale-125"
+                              : "bg-gray-300 hover:bg-gray-400"
+                          }`}
+                          aria-label={`Go to image ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </motion.div>
               </div>
 
