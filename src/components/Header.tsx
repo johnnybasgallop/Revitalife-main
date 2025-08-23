@@ -135,7 +135,7 @@ export function Header() {
     <>
       <div className="flex flex-col">
         {/* Scrolling announcement bar (3 items per loop, seamless) */}
-        <div className="w-full bg-[#7F9F4B]/20 h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
+        <div className="w-full bg-[#7F9F4B]/14 h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
           <motion.div
             className="flex flex-none"
             animate={{ x: ["0%", "-50%"] }}

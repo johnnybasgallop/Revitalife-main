@@ -10,13 +10,17 @@ export function TestimonialsSection() {
     <section
       ref={ref}
       id="testimonials"
-      className="py-24 bg-[#7F9F4B]/20 overflow-hidden relative snap-start snap-always"
+      className="py-24 bg-white overflow-hidden relative snap-start snap-always"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             What Our Customers Say
           </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Every scoop of Revitalife contains 22 carefully selected superfoods
+            to support your daily wellness goals.
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (

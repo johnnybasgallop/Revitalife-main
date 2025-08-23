@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import ScrollReveal from "../components/ScrollReveal";
 
@@ -61,9 +60,9 @@ export function OurApp() {
     <section
       id="app"
       ref={sectionRef}
-      className="py-24 min-h-[80vh] lg:py-40 bg-white overflow-hidden relative"
+      className="py-24 min-h-[80vh] lg:py-40 bg-[#7F9F4B]/14 overflow-hidden relative"
     >
-      {/* Decorative elements - hidden on mobile */}
+      {/* Decorative elements - hidden on mobile
       {!isMobile && (
         <>
           <motion.div
@@ -78,7 +77,7 @@ export function OurApp() {
             }}
           />
         </>
-      )}
+      )} */}
 
       <div className="container mx-auto px-4 relative">
         <div
@@ -86,37 +85,211 @@ export function OurApp() {
             isMobile ? "" : "lg:grid-cols-2"
           } gap-8 lg:gap-16 items-center`}
         >
-          {/* Image section with conditional styling */}
+          {/* App Sign-up Form */}
           <div className={`${isMobile ? "flex justify-center mb-8" : ""}`}>
             {isMobile ? (
-              <div className="bg-white rounded-2xl shadow-lg p-8 flex items-center justify-center relative overflow-hidden max-w-md mx-auto">
-                {/* Simple gradients */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-b from-emerald-50 to-transparent rounded-full opacity-70 - "></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-amber-50/40 to-transparent rounded-full opacity-70 - "></div>
+              <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center relative overflow-hidden max-w-md mx-auto">
+                <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+                  Get Early Access
+                </h2>
+                <p className="text-lg text-gray-600 mb-8 text-center">
+                  Be the first to know when our wellness app launches. Get
+                  exclusive early access and special offers.
+                </p>
 
-                <Image
-                  src="/Yoga.png"
-                  alt="Revitalife Yoga App"
-                  width={400}
-                  height={400}
-                  className="w-auto h-auto max-h-[400px] object-contain"
-                />
+                <form className="w-full space-y-6">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Phone Number{" "}
+                      <span className="text-gray-400">(Optional)</span>
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      id="notifications"
+                      name="notifications"
+                      className="mt-1 h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="notifications"
+                      className="text-sm text-gray-600"
+                    >
+                      I want to receive updates about new features, wellness
+                      tips, and exclusive offers
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-amber-600 hover:to-amber-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Get Early Access
+                  </button>
+                </form>
+
+                <div className="flex flex-col items-center space-y-2 mt-6 text-sm text-gray-500">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    <span>Free to join</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    <span>No spam</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    <span>Unsubscribe anytime</span>
+                  </div>
+                </div>
               </div>
             ) : (
               <motion.div style={{ x: imageX }} className="relative">
                 <ScrollReveal variant="fadeInLeft" duration={1}>
-                  <div className="bg-white rounded-2xl shadow-lg p-8 flex items-center justify-center relative overflow-hidden h-[500px]">
-                    {/* Subtle gradient accents */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-b from-emerald-50 to-transparent rounded-full opacity-70 - "></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-amber-50/40 to-transparent rounded-full opacity-70 - "></div>
+                  <div className="bg-white rounded-2xl shadow-lg px-8 py-10 flex flex-col items-center justify-center relative overflow-hidden min-h-[500px]">
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 text-center">
+                      Get Early Access
+                    </h2>
+                    <p className="text-lg text-gray-600 mb-8 text-center max-w-md">
+                      Be the first to know when our wellness app launches. Get
+                      exclusive early access and special offers.
+                    </p>
 
-                    <Image
-                      src="/Yoga.png"
-                      alt="Revitalife Yoga App"
-                      width={600}
-                      height={600}
-                      className="w-auto h-auto max-h-[100%] object-fill"
-                    />
+                    <form className="w-full max-w-md space-y-6">
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                          placeholder="Enter your full name"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="email"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                          placeholder="your@email.com"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="phone"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Phone Number{" "}
+                          <span className="text-gray-400">(Optional)</span>
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                          placeholder="+1 (555) 123-4567"
+                        />
+                      </div>
+
+                      <div className="flex items-start space-x-3">
+                        <input
+                          type="checkbox"
+                          id="notifications"
+                          name="notifications"
+                          className="mt-1 h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
+                        />
+                        <label
+                          htmlFor="notifications"
+                          className="text-sm text-gray-600"
+                        >
+                          I want to receive updates about new features, wellness
+                          tips, and exclusive offers
+                        </label>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full bg-emerald-900/80 text-white font-semibold py-4 px-6 rounded-xl hover:from-amber-600 hover:to-amber-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                      >
+                        Get Early Access
+                      </button>
+                    </form>
+
+                    <div className="flex items-center space-x-4 mt-6 text-sm text-gray-500">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                        <span>Free to join</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                        <span>No spam</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                        <span>Unsubscribe anytime</span>
+                      </div>
+                    </div>
                   </div>
                 </ScrollReveal>
               </motion.div>
@@ -128,11 +301,9 @@ export function OurApp() {
             {isMobile ? (
               <div className="bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden max-w-md mx-auto">
                 {/* Simple gradients */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-b from-emerald-50 to-transparent rounded-full opacity-70 - "></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-amber-50/40 to-transparent rounded-full opacity-70 - "></div>
 
                 <h2 className="text-3xl font-bold text-gray-900 mb-6 relative  ">
-                  Try out our new App
+                  New App Coming Soon
                 </h2>
 
                 <div className="space-y-6 text-gray-700 relative  ">
@@ -242,11 +413,9 @@ export function OurApp() {
                 <ScrollReveal variant="fadeInRight" duration={1}>
                   <div className="bg-white rounded-2xl shadow-lg p-8 relative overflow-hidden">
                     {/* Subtle gradient accents */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-b from-emerald-50 to-transparent rounded-full opacity-70 - "></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-amber-50/40 to-transparent rounded-full opacity-70 - "></div>
 
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 relative  ">
-                      Try out our new App
+                      New App Coming Soon...
                     </h2>
 
                     <div className="space-y-6 text-gray-700 relative  ">

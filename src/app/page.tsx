@@ -18,8 +18,8 @@ export default function Home() {
         <Header />
         <main>
           <HeroSection />
-          <BuySection />
           <IngredientsSection />
+          <BuySection />
           <TestimonialsSection />
           <OurApp />
           <FAQSection />

@@ -170,4 +170,22 @@ export const testimonials = [
     author: "Jamie L.",
     location: "Chicago, IL",
   },
+  {
+    quote:
+      "I've been taking Revitalife for 3 months and my energy levels have never been better. The mango flavor makes it easy to drink every morning!",
+    author: "Sarah K.",
+    location: "Portland, OR",
+  },
+  {
+    quote:
+      "As a busy mom of three, I need all the natural energy I can get. Revitalife has become an essential part of my morning routine.",
+    author: "Michael T.",
+    location: "Austin, TX",
+  },
+  {
+    quote:
+      "The difference in my digestion and overall wellbeing since starting Revitalife has been remarkable. Plus, it actually tastes good!",
+    author: "Jamie L.",
+    location: "Chicago, IL",
+  },
 ];
