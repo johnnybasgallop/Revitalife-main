@@ -50,12 +50,69 @@ export async function POST(request: NextRequest) {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
+
+      // Shipping options (you can customize these)
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: 0,
+              currency: "usd",
+            },
+            display_name: "Free shipping",
+            delivery_estimate: {
+              minimum: {
+                unit: "business_day",
+                value: 3,
+              },
+              maximum: {
+                unit: "business_day",
+                value: 7,
+              },
+            },
+          },
+        },
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: 599, // $5.99 in cents
+              currency: "usd",
+            },
+            display_name: "Express shipping",
+            delivery_estimate: {
+              minimum: {
+                unit: "business_day",
+                value: 1,
+              },
+              maximum: {
+                unit: "business_day",
+                value: 3,
+              },
+            },
+          },
+        },
+      ],
+
       success_url: `${
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
       }/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
       }/cancel`,
+
+      // Customer email collection
+      customer_email: undefined, // Will prompt customer to enter email
+
+      // Billing address collection
+      billing_address_collection: "required",
+
+      // Shipping address collection
+      shipping_address_collection: {
+        allowed_countries: ["US", "CA", "GB", "AU"], // Customize based on where you ship
+      },
+
       metadata: {
         items: JSON.stringify(
           items.map((item: any) => ({
