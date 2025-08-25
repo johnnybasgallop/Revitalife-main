@@ -6,13 +6,8 @@ import { FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
 import { useBasket } from "../contexts/BasketContext";
 import { useNotification } from "../contexts/NotificationContext";
 
-interface BasketProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export default function Basket({ isOpen, onClose }: BasketProps) {
-  const { state, removeItem, updateQuantity } = useBasket();
+export default function Basket() {
+  const { state, removeItem, updateQuantity, setIsBasketOpen } = useBasket();
   const { addNotification } = useNotification();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
@@ -79,14 +74,14 @@ export default function Basket({ isOpen, onClose }: BasketProps) {
     }
   };
 
-  if (!isOpen) return null;
+  if (!state.isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-none bg-opacity-50 transition-opacity"
-        onClick={onClose}
+        onClick={() => setIsBasketOpen(false)}
       />
 
       {/* Basket Panel */}
@@ -113,7 +108,7 @@ export default function Basket({ isOpen, onClose }: BasketProps) {
               </div>
 
               <button
-                onClick={onClose}
+                onClick={() => setIsBasketOpen(false)}
                 className="w-8 h-8 bg-white/80 hover:bg-white text-gray-500 hover:text-gray-700 rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110 border border-gray-100"
                 aria-label="Close basket"
               >

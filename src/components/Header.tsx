@@ -8,13 +8,14 @@ import { MdOutlinePersonOutline } from "react-icons/md";
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useBasket } from "../contexts/BasketContext";
 import Basket from "./Basket";
 import BasketIcon from "./BasketIcon";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [isBasketOpen, setIsBasketOpen] = useState(false);
+  const { state, setIsBasketOpen } = useBasket();
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const isHomePage = pathname === "/";
@@ -338,7 +339,7 @@ export function Header() {
       )}
 
       {/* Basket Component */}
-      <Basket isOpen={isBasketOpen} onClose={() => setIsBasketOpen(false)} />
+      <Basket />
     </>
   );
 }

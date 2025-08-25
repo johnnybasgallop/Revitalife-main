@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, ReactNode, useContext, useReducer } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 export interface BasketItem {
   id: string;
@@ -15,18 +21,23 @@ interface BasketState {
   items: BasketItem[];
   total: number;
   itemCount: number;
+  isOpen: boolean;
 }
 
 type BasketAction =
   | { type: "ADD_ITEM"; payload: BasketItem }
   | { type: "REMOVE_ITEM"; payload: string }
   | { type: "UPDATE_QUANTITY"; payload: { id: string; quantity: number } }
-  | { type: "CLEAR_BASKET" };
+  | { type: "CLEAR_BASKET" }
+  | { type: "TOGGLE_BASKET" }
+  | { type: "SET_BASKET_OPEN"; payload: boolean }
+  | { type: "LOAD_FROM_STORAGE"; payload: BasketState };
 
 const initialState: BasketState = {
   items: [],
   total: 0,
   itemCount: 0,
+  isOpen: false,
 };
 
 function basketReducer(state: BasketState, action: BasketAction): BasketState {
@@ -126,6 +137,21 @@ function basketReducer(state: BasketState, action: BasketAction): BasketState {
     case "CLEAR_BASKET":
       return initialState;
 
+    case "TOGGLE_BASKET":
+      return {
+        ...state,
+        isOpen: !state.isOpen,
+      };
+
+    case "SET_BASKET_OPEN":
+      return {
+        ...state,
+        isOpen: action.payload,
+      };
+
+    case "LOAD_FROM_STORAGE":
+      return action.payload;
+
     default:
       return state;
   }
@@ -137,12 +163,51 @@ interface BasketContextType {
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearBasket: () => void;
+  toggleBasket: () => void;
+  setIsBasketOpen: (isOpen: boolean) => void;
 }
 
 const BasketContext = createContext<BasketContextType | undefined>(undefined);
 
 export function BasketProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(basketReducer, initialState);
+
+  // Load basket from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedBasket = localStorage.getItem("revitalife-basket");
+      if (savedBasket) {
+        const parsedBasket = JSON.parse(savedBasket);
+        // Ensure we have all required fields
+        const validBasket = {
+          items: parsedBasket.items || [],
+          total: parsedBasket.total || 0,
+          itemCount: parsedBasket.itemCount || 0,
+          isOpen: false, // Always start with basket closed on refresh
+        };
+        dispatch({ type: "LOAD_FROM_STORAGE", payload: validBasket });
+      }
+    } catch (error) {
+      console.error("Error loading basket from localStorage:", error);
+    }
+  }, []);
+
+  // Save basket to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "revitalife-basket",
+        JSON.stringify({
+          items: state.items,
+          total: state.total,
+          itemCount: state.itemCount,
+          // Don't save isOpen state to localStorage
+        })
+      );
+    } catch (error) {
+      console.error("Error saving basket to localStorage:", error);
+    }
+  }, [state.items, state.total, state.itemCount]);
 
   const addItem = (item: BasketItem) => {
     dispatch({ type: "ADD_ITEM", payload: item });
@@ -164,9 +229,25 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "CLEAR_BASKET" });
   };
 
+  const toggleBasket = () => {
+    dispatch({ type: "TOGGLE_BASKET" });
+  };
+
+  const setIsBasketOpen = (isOpen: boolean) => {
+    dispatch({ type: "SET_BASKET_OPEN", payload: isOpen });
+  };
+
   return (
     <BasketContext.Provider
-      value={{ state, addItem, removeItem, updateQuantity, clearBasket }}
+      value={{
+        state,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearBasket,
+        toggleBasket,
+        setIsBasketOpen,
+      }}
     >
       {children}
     </BasketContext.Provider>
