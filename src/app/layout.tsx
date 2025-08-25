@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { BasketProvider } from "../contexts/BasketContext";
+import { NotificationProvider } from "../contexts/NotificationContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,7 +39,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
       >
-        <BasketProvider>{children}</BasketProvider>
+        <BasketProvider>
+          <NotificationProvider>{children}</NotificationProvider>
+        </BasketProvider>
       </body>
     </html>
   );

@@ -6,13 +6,17 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { Button } from "../components/Button";
 import ScrollReveal from "../components/ScrollReveal";
 import { useBasket } from "../contexts/BasketContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 export function BuySection() {
   const sectionRef = useRef<HTMLElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [showFlyingProduct, setShowFlyingProduct] = useState(false);
   const { addItem } = useBasket();
+  const { addNotification } = useNotification();
 
   const productImages = [
     "/prod/prod1.png",
@@ -30,7 +34,13 @@ export function BuySection() {
     );
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    setIsAddingToCart(true);
+
+    // Simulate a brief loading state
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    // Add item to basket
     addItem({
       id: "revitalife-superfood-mix",
       name: "Revitalife Superfood Mix",
@@ -39,6 +49,23 @@ export function BuySection() {
       image: productImages[currentImageIndex],
       description: "Mango Flavor • 30 Servings",
     });
+
+    // Show flying product animation
+    setShowFlyingProduct(true);
+    setIsAddingToCart(false);
+
+    // Show notification
+    addNotification({
+      type: "success",
+      title: "Added to Cart!",
+      message: `Added ${quantity} ${
+        quantity === 1 ? "item" : "items"
+      } to your basket`,
+      duration: 4000,
+    });
+
+    // Hide flying product after animation completes
+    setTimeout(() => setShowFlyingProduct(false), 1500);
   };
 
   const { scrollYProgress } = useScroll({
@@ -160,6 +187,18 @@ export function BuySection() {
                       scale: productScale,
                     }}
                     className="relative"
+                    animate={
+                      isAddingToCart
+                        ? {
+                            scale: [1, 1.05, 1],
+                            rotate: [0, 2, -2, 0],
+                          }
+                        : {}
+                    }
+                    transition={{
+                      duration: 0.6,
+                      ease: "easeInOut",
+                    }}
                   >
                     {/* Product Image Carousel */}
                     <div className="relative w-full h-full">
@@ -383,13 +422,77 @@ export function BuySection() {
                 </ScrollReveal>
 
                 <ScrollReveal variant="fadeInRight" delay={0.5} duration={0.8}>
-                  <Button
-                    size="lg"
-                    className="w-full md:w-auto text-lg py-3 px-8"
-                    onClick={handleAddToCart}
-                  >
-                    Add to Cart
-                  </Button>
+                  <div className="relative">
+                    <Button
+                      size="lg"
+                      className={`w-full md:w-auto text-lg py-3 px-8 transition-all duration-300 ${
+                        isAddingToCart
+                          ? "bg-emerald-600 scale-95 cursor-not-allowed"
+                          : "hover:scale-105 hover:shadow-lg"
+                      }`}
+                      onClick={handleAddToCart}
+                      disabled={isAddingToCart}
+                    >
+                      {isAddingToCart ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Adding to Cart...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
+                            />
+                          </svg>
+                          <span>Add to Cart</span>
+                        </div>
+                      )}
+                    </Button>
+
+                    {/* Flying Product Animation */}
+                    {showFlyingProduct && (
+                      <motion.div
+                        initial={{
+                          opacity: 1,
+                          scale: 1,
+                          x: 0,
+                          y: 0,
+                          rotate: 0,
+                        }}
+                        animate={{
+                          opacity: [1, 1, 0],
+                          scale: [1, 0.8, 0.3],
+                          x: [0, -200, -400],
+                          y: [0, -100, -200],
+                          rotate: [0, 15, 30],
+                        }}
+                        transition={{
+                          duration: 1.2,
+                          ease: "easeInOut",
+                          times: [0, 0.7, 1],
+                        }}
+                        className="absolute top-1/2 left-1/2 w-16 h-16 pointer-events-none z-50"
+                        style={{
+                          transformOrigin: "center",
+                        }}
+                      >
+                        <img
+                          src={productImages[currentImageIndex]}
+                          alt="Flying product"
+                          className="w-full h-full object-cover rounded-lg shadow-lg border-2 border-white"
+                        />
+                      </motion.div>
+                    )}
+                  </div>
                 </ScrollReveal>
               </div>
             </div>
