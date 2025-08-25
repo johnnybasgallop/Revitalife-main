@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { BasketProvider } from "../contexts/BasketContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,8 +15,17 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Revitalife | Daily Wellness in a Scoop",
-  description: "Revitalife combines 22 powerful superfoods in a delicious mango-flavored powder. Give your body what it needs to thrive.",
-  keywords: ["wellness", "superfoods", "health", "nutrition", "supplement", "green powder", "mango"],
+  description:
+    "Revitalife combines 22 powerful superfoods in a delicious mango-flavored powder. Give your body what it needs to thrive.",
+  keywords: [
+    "wellness",
+    "superfoods",
+    "health",
+    "nutrition",
+    "supplement",
+    "green powder",
+    "mango",
+  ],
 };
 
 export default function RootLayout({
@@ -28,7 +38,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
       >
-        {children}
+        <BasketProvider>{children}</BasketProvider>
       </body>
     </html>
   );

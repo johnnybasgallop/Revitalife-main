@@ -5,14 +5,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoSearch } from "react-icons/io5";
 import { MdOutlinePersonOutline } from "react-icons/md";
-import { TbShoppingBag } from "react-icons/tb";
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Basket from "./Basket";
+import BasketIcon from "./BasketIcon";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [isBasketOpen, setIsBasketOpen] = useState(false);
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const isHomePage = pathname === "/";
@@ -88,16 +90,6 @@ export function Header() {
     { href: "/our-app", label: "Our App" },
   ];
 
-  // Navigation items
-  const navIcons = [
-    { href: "/search", label: <IoSearch className="w-5 h-10" /> },
-    {
-      href: "/account",
-      label: <MdOutlinePersonOutline className="w-5 h-10" />,
-    },
-    { href: "/basket", label: <TbShoppingBag className="w-5 h-10" /> },
-  ];
-
   // Marquee items (single source of truth)
   const marqueeItems = [
     "Free UK Shipping on orders over £35",
@@ -133,9 +125,9 @@ export function Header() {
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="sticky top-0 z-50 flex flex-col">
         {/* Scrolling announcement bar (3 items per loop, seamless) */}
-        <div className="w-full bg-[#7F9F4B]/14 h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
+        <div className="relative z-30 w-full bg-[#edf1e6] h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
           <motion.div
             className="flex flex-none"
             animate={{ x: ["0%", "-50%"] }}
@@ -150,7 +142,11 @@ export function Header() {
           </motion.div>
         </div>
 
-        <header className="bg-white text-black backdrop-blur-md md:backdrop-blur-xs transition-all duration-300">
+        <header
+          className={`bg-white text-black backdrop-blur-md md:backdrop-blur-xs transition-all duration-300 ${
+            hasScrolled ? "shadow-lg shadow-black/5" : ""
+          }`}
+        >
           <motion.div
             className="absolute inset-0 bg-emerald-950/93 -z-10"
             style={{
@@ -217,9 +213,7 @@ export function Header() {
               <Link href="/account" aria-label="Account">
                 <MdOutlinePersonOutline className="w-5 h-5" />
               </Link>
-              <Link href="/basket" aria-label="Basket">
-                <TbShoppingBag className="w-5 h-5" />
-              </Link>
+              <BasketIcon onClick={() => setIsBasketOpen(true)} />
             </div>
           </div>
 
@@ -262,22 +256,25 @@ export function Header() {
 
             <nav className="hidden lg:flex justify-end w-1/3 px-4">
               <ul className="flex items-center space-x-10">
-                {navIcons.map((item, index) => (
-                  <li key={index}>
-                    <Link
-                      href={item.href}
-                      className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
-                      onClick={(e) => {
-                        if (isHomePage && item.href.startsWith("#")) {
-                          e.preventDefault();
-                          handleNavigation(item.href);
-                        }
-                      }}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
+                <li>
+                  <Link
+                    href="/search"
+                    className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
+                  >
+                    <IoSearch className="w-5 h-5" />
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/account"
+                    className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
+                  >
+                    <MdOutlinePersonOutline className="w-5 h-5" />
+                  </Link>
+                </li>
+                <li>
+                  <BasketIcon onClick={() => setIsBasketOpen(true)} />
+                </li>
               </ul>
             </nav>
           </div>
@@ -339,6 +336,9 @@ export function Header() {
           </motion.div>
         </div>
       )}
+
+      {/* Basket Component */}
+      <Basket isOpen={isBasketOpen} onClose={() => setIsBasketOpen(false)} />
     </>
   );
 }
