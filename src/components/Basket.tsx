@@ -168,8 +168,10 @@ export default function Basket() {
                   >
                     {/* Decorative background elements */}
                     <div className="absolute inset-0 bg-[#edf1e6]/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                    <div className="relative flex items-center space-x-4">
+                    <h3 className="font-semibold pb-4 text-[#2d4a3e] text-lg mb-1 truncate group-hover:text-[#1a2f26] transition-colors">
+                      {item.name}
+                    </h3>
+                    <div className="relative flex items-center space-x-8">
                       {/* Enhanced product image */}
                       <div className="relative">
                         <div className="absolute inset-0 bg-[#d1d9c0] rounded-lg opacity-20 blur-sm" />
@@ -181,22 +183,6 @@ export default function Basket() {
                         {/* Quantity badge overlay */}
                         <div className="absolute -top-2 -right-2 bg-[#2d4a3e] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
                           {item.quantity}
-                        </div>
-                      </div>
-
-                      {/* Product info with enhanced styling */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-[#2d4a3e] text-lg mb-1 truncate group-hover:text-[#1a2f26] transition-colors">
-                          {item.name}
-                        </h3>
-                        <p className="text-sm text-[#4a6b5a] mb-2">
-                          {item.description || "Premium superfood blend"}
-                        </p>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg font-bold text-[#2d4a3e]">
-                            ${item.price.toFixed(2)}
-                          </span>
-                          <span className="text-sm text-[#6b8a7a]">each</span>
                         </div>
                       </div>
 
@@ -223,16 +209,15 @@ export default function Basket() {
                         >
                           <FaPlus className="h-3 w-3" />
                         </button>
+                        {/* Enhanced remove button */}
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 hover:scale-110 group/remove"
+                          aria-label="Remove item"
+                        >
+                          <FaTrash className="h-4 w-4 group-hover/remove:rotate-12 transition-transform duration-200" />
+                        </button>
                       </div>
-
-                      {/* Enhanced remove button */}
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 hover:scale-110 group/remove"
-                        aria-label="Remove item"
-                      >
-                        <FaTrash className="h-4 w-4 group-hover/remove:rotate-12 transition-transform duration-200" />
-                      </button>
                     </div>
 
                     {/* Subtle connection line to next item */}
