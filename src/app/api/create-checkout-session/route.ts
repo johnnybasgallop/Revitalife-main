@@ -36,8 +36,15 @@ export async function POST(request: NextRequest) {
           currency: "usd",
           product_data: {
             name: item.name,
-            description: item.description || "",
+            description:
+              item.description ||
+              "Premium superfood blend with natural ingredients for optimal wellness and vitality.",
             images: [imageUrl],
+            metadata: {
+              flavor: "Mango",
+              servings: "30",
+              category: "Superfoods",
+            },
           },
           unit_amount: Math.round(item.price * 100), // Convert to cents
         },
@@ -111,6 +118,22 @@ export async function POST(request: NextRequest) {
       // Shipping address collection
       shipping_address_collection: {
         allowed_countries: ["US", "CA", "GB", "AU"], // Customize based on where you ship
+      },
+
+      // Enhanced branding and customization
+      submit_type: "pay", // More professional than "auto"
+      allow_promotion_codes: true, // Enable discount codes
+
+      // Custom text and branding
+      custom_text: {
+        submit: {
+          message:
+            "Your order will be processed securely by Stripe. You'll receive a confirmation email once payment is complete.",
+        },
+        shipping_address: {
+          message:
+            "We'll ship your order to this address. Please ensure it's correct for timely delivery.",
+        },
       },
 
       metadata: {

@@ -98,33 +98,6 @@ export function BuySection() {
       ref={sectionRef}
       className="relative min-h-[95vh] flex items-center pb-10 md:py-15 lg:py-32 bg-[#7F9F4B]/14 overflow-hidden"
     >
-      {/* Decorative elements with parallax motion
-      <motion.div
-        className="absolute top-1/4 right-10 w-80 h-80 bg-green-100 rounded-full opacity-50 blur-3xl"
-        style={{ y: decorationY1, x: decorationX1 }}
-      />
-      <motion.div
-        className="absolute top-1/3 left-10 w-96 h-96 bg-amber-100 rounded-full opacity-60 blur-3xl"
-        style={{ y: decorationY2, x: decorationX2 }}
-      />
-      <motion.div
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-100 rounded-full opacity-70 blur-3xl"
-        style={{ y: decorationY3 }}
-      />
-      <motion.div
-        className="absolute -bottom-20 left-1/3 w-72 h-72 bg-blue-50 rounded-full opacity-50 blur-3xl"
-        style={{
-          y: useTransform(scrollYProgress, [0, 1], [50, -30]),
-          rotate: useTransform(scrollYProgress, [0, 1], [0, 15]),
-        }}
-      />
-      <motion.div
-        className="absolute top-20 left-1/4 w-32 h-32 bg-yellow-100 rounded-full opacity-60 blur-2xl"
-        style={{
-          y: useTransform(scrollYProgress, [0, 1], [-20, 40]),
-          scale: useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.2, 1]),
-        }}
-      /> */}
       <div className="w-full px-4 md:px-10 lg:px-20">
         <ScrollReveal variant="fadeIn" duration={1}>
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl flex items-center shadow-2xl p-10 lg:p-16 min-h-[650px] border border-gray-100 relative overflow-hidden">
@@ -135,53 +108,8 @@ export function BuySection() {
                 ref={productRef}
                 className="relative flex justify-center items-center"
               >
-                {/* Decorative background elements */}
-                <div className="absolute inset-0 -z-10">
-                  {/* Floating orbs */}
-                  <motion.div
-                    className="absolute top-10 left-10 w-24 h-24 bg-gradient-to-br from-emerald-200 to-blue-200 rounded-full opacity-60 blur-xl"
-                    animate={{
-                      y: [0, -20, 0],
-                      scale: [1, 1.1, 1],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  />
-                  <motion.div
-                    className="absolute bottom-20 right-8 w-32 h-32 bg-gradient-to-br from-amber-200 to-orange-200 rounded-full opacity-50 blur-xl"
-                    animate={{
-                      y: [0, 15, 0],
-                      scale: [1, 0.9, 1],
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1,
-                    }}
-                  />
-                  <motion.div
-                    className="absolute top-1/2 -left-4 w-16 h-16 bg-gradient-to-br from-green-200 to-emerald-200 rounded-full opacity-40 blur-lg"
-                    animate={{
-                      x: [0, 10, 0],
-                      rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                      duration: 6,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  />
-                </div>
-
                 {/* Product showcase container */}
-                <div className="relative bg-gradient-to-br from-white/80 to-emerald-50/60 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/50">
-                  {/* Subtle grid pattern background */}
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(34,197,94,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,197,94,0.03)_1px,transparent_1px)] bg-[size:20px_20px] rounded-3xl" />
-
+                <div className="relative bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
                   <motion.div
                     style={{
                       scale: productScale,
@@ -204,9 +132,9 @@ export function BuySection() {
                     <div className="relative w-full h-full">
                       <motion.div
                         key={currentImageIndex}
-                        initial={{ opacity: 0, scale: 0.8 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
                         className="w-full h-full"
                       >
                         <img
@@ -214,37 +142,37 @@ export function BuySection() {
                           alt={`Revitalife Greens Powder - Image ${
                             currentImageIndex + 1
                           }`}
-                          className="w-full h-full rounded-2xl max-w-[400px] h-auto shadow-xl"
+                          className="w-full h-full rounded-2xl max-w-[400px] h-auto"
                         />
                       </motion.div>
 
-                      {/* Enhanced Navigation Arrows */}
+                      {/* Clean Navigation Arrows */}
                       <button
                         onClick={prevImage}
-                        className="absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-700 hover:text-emerald-600 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 border border-gray-100"
+                        className="absolute -left-12 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 text-gray-600 hover:text-[#2d4a3e] rounded-full p-2.5 shadow-md transition-all duration-200 hover:scale-105 border border-gray-200"
                         aria-label="Previous image"
                       >
-                        <IoChevronBack className="w-6 h-6" />
+                        <IoChevronBack className="w-5 h-5" />
                       </button>
 
                       <button
                         onClick={nextImage}
-                        className="absolute -right-6 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-700 hover:text-emerald-600 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 border border-gray-100"
+                        className="absolute -right-12 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 text-gray-600 hover:text-[#2d4a3e] hover:scale-105 rounded-full p-2.5 shadow-md transition-all duration-200 border border-gray-200"
                         aria-label="Next image"
                       >
-                        <IoChevronForward className="w-6 h-6" />
+                        <IoChevronForward className="w-5 h-5" />
                       </button>
 
-                      {/* Enhanced Image Indicators */}
-                      <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+                      {/* Clean Image Indicators */}
+                      <div className="absolute -bottom-15 left-1/2 transform -translate-x-1/2 flex space-x-2">
                         {productImages.map((_, index) => (
                           <button
                             key={index}
                             onClick={() => setCurrentImageIndex(index)}
-                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
                               index === currentImageIndex
-                                ? "bg-emerald-500 scale-125 shadow-lg shadow-emerald-500/50"
-                                : "bg-gray-300 hover:bg-emerald-300 hover:scale-110"
+                                ? "bg-[#2d4a3e] scale-110"
+                                : "bg-gray-300 hover:bg-gray-400"
                             }`}
                             aria-label={`Go to image ${index + 1}`}
                           />
@@ -254,114 +182,14 @@ export function BuySection() {
                   </motion.div>
 
                   {/* Product badges */}
-                  <div className="absolute -top-4 -right-4 flex flex-col space-y-2">
-                    <div className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  <div className="absolute -top-3 -right-3 flex flex-col space-y-2">
+                    <div className="bg-[#2d4a3e] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                       ORGANIC
                     </div>
-                    <div className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    <div className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                       PREMIUM
                     </div>
                   </div>
-
-                  {/* Floating ingredient icons */}
-                  <div className="absolute -bottom-6 -left-6">
-                    <motion.div
-                      className="w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center border border-emerald-100"
-                      animate={{
-                        y: [0, -8, 0],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <img
-                        src="/icons/spirulina.svg"
-                        alt="Spirulina"
-                        className="w-6 h-6"
-                      />
-                    </motion.div>
-                  </div>
-
-                  <div className="absolute -top-6 -left-6">
-                    <motion.div
-                      className="w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center border border-amber-100"
-                      animate={{
-                        y: [0, 6, 0],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 0.5,
-                      }}
-                    >
-                      <img
-                        src="/icons/mango.svg"
-                        alt="Mango"
-                        className="w-5 h-5"
-                      />
-                    </motion.div>
-                  </div>
-
-                  {/* Additional floating elements */}
-                  <div className="absolute top-1/2 -right-8">
-                    <motion.div
-                      className="w-8 h-8 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-80"
-                      animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.8, 0.4, 0.8],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 2,
-                      }}
-                    />
-                  </div>
-
-                  {/* Connection lines between elements */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                    <motion.line
-                      x1="20%"
-                      y1="30%"
-                      x2="80%"
-                      y2="70%"
-                      stroke="url(#gradient1)"
-                      strokeWidth="1"
-                      opacity="0.3"
-                      animate={{
-                        pathLength: [0, 1, 0],
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    />
-                    <defs>
-                      <linearGradient
-                        id="gradient1"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="100%"
-                      >
-                        <stop
-                          offset="0%"
-                          stopColor="#10b981"
-                          stopOpacity="0.3"
-                        />
-                        <stop
-                          offset="100%"
-                          stopColor="#f59e0b"
-                          stopOpacity="0.3"
-                        />
-                      </linearGradient>
-                    </defs>
-                  </svg>
                 </div>
               </div>
 
