@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
 import { useBasket } from "../contexts/BasketContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 interface BasketProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface BasketProps {
 
 export default function Basket({ isOpen, onClose }: BasketProps) {
   const { state, removeItem, updateQuantity } = useBasket();
+  const { addNotification } = useNotification();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const handleCheckout = async () => {
@@ -30,10 +32,45 @@ export default function Basket({ isOpen, onClose }: BasketProps) {
       });
 
       if (response.ok) {
-        const { url } = await response.json();
-        window.location.href = url;
+        const data = await response.json();
+
+        // Validate the URL before redirecting
+        if (!data.url || typeof data.url !== "string") {
+          console.error("Invalid URL received from Stripe:", data);
+          addNotification({
+            type: "error",
+            title: "Checkout Error",
+            message: "Invalid checkout URL received from Stripe",
+          });
+          return;
+        }
+
+        // Validate URL format
+        try {
+          new URL(data.url);
+        } catch (urlError) {
+          console.error("Invalid URL format:", data.url, urlError);
+          addNotification({
+            type: "error",
+            title: "Checkout Error",
+            message: "Invalid checkout URL format",
+          });
+          return;
+        }
+
+        // Redirect to Stripe checkout
+        console.log("Redirecting to Stripe checkout:", data.url);
+        window.location.href = data.url;
       } else {
-        console.error("Failed to create checkout session");
+        const errorData = await response.json();
+        console.error("Failed to create checkout session:", errorData.error);
+
+        // Show error notification
+        addNotification({
+          type: "error",
+          title: "Checkout Error",
+          message: errorData.error || "Failed to create checkout session",
+        });
       }
     } catch (error) {
       console.error("Error during checkout:", error);
