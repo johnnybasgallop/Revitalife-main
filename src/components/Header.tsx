@@ -3,7 +3,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { IoSearch } from "react-icons/io5";
 import { MdOutlinePersonOutline } from "react-icons/md";
 
 import { usePathname } from "next/navigation";
@@ -206,16 +205,6 @@ export function Header() {
                 priority
               />
             </Link>
-
-            <div className="flex items-center space-x-6 justify-self-end">
-              <Link href="/search" aria-label="Search">
-                <IoSearch className="w-5 h-5" />
-              </Link>
-              <Link href="/account" aria-label="Account">
-                <MdOutlinePersonOutline className="w-5 h-5" />
-              </Link>
-              <BasketIcon onClick={() => setIsBasketOpen(true)} />
-            </div>
           </div>
 
           {/* Desktop row */}
@@ -259,18 +248,10 @@ export function Header() {
               <ul className="flex items-center space-x-10">
                 <li>
                   <Link
-                    href="/search"
-                    className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
-                  >
-                    <IoSearch className="w-5 h-5" />
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     href="/account"
                     className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
                   >
-                    <MdOutlinePersonOutline className="w-5 h-5" />
+                    <MdOutlinePersonOutline className="w-7 h-7" />
                   </Link>
                 </li>
                 <li>
