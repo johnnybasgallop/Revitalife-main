@@ -88,20 +88,20 @@ export default function Basket() {
       <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-emerald-50 to-blue-50 p-6 border-b border-emerald-100">
+          <div className="relative bg-[#edf1e6] p-6 border-b border-[#d1d9c0]">
             {/* Decorative background */}
-            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(16,185,129,0.03)_25%,rgba(16,185,129,0.03)_75%,transparent_75%)] bg-[size:20px_20px] opacity-60" />
+            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(45,74,62,0.03)_25%,rgba(45,74,62,0.03)_75%,transparent_75%)] bg-[size:20px_20px] opacity-60" />
 
             <div className="relative flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-10 h-10 bg-[#2d4a3e] rounded-full flex items-center justify-center shadow-lg">
                   <FaShoppingCart className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-xl font-bold text-[#2d4a3e]">
                     Shopping Basket
                   </h2>
-                  <p className="text-sm text-emerald-600 font-medium">
+                  <p className="text-sm text-[#2d4a3e] font-medium">
                     {state.itemCount} item{state.itemCount !== 1 ? "s" : ""}
                   </p>
                 </div>
@@ -135,23 +135,23 @@ export default function Basket() {
               <div className="text-center py-12">
                 {/* Enhanced empty state */}
                 <div className="relative mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-blue-100 rounded-full w-24 h-24 mx-auto opacity-60 blur-xl" />
-                  <FaShoppingCart className="relative mx-auto h-16 w-16 text-emerald-400 mb-4" />
+                  <div className="absolute inset-0 bg-[#d1d9c0] rounded-full w-24 h-24 mx-auto opacity-60 blur-xl" />
+                  <FaShoppingCart className="relative mx-auto h-16 w-16 text-[#2d4a3e] mb-4" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-700 mb-2">
+                <h3 className="text-lg font-medium text-[#2d4a3e] mb-2">
                   Your basket is empty
                 </h3>
-                <p className="text-gray-500 mb-4">
+                <p className="text-[#4a6b5a] mb-4">
                   Start your wellness journey today!
                 </p>
                 <div className="flex justify-center space-x-2">
-                  <div className="w-2 h-2 bg-emerald-300 rounded-full animate-pulse" />
+                  <div className="w-2 h-2 bg-[#d1d9c0] rounded-full animate-pulse" />
                   <div
-                    className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"
+                    className="w-2 h-2 bg-[#b8c4a8] rounded-full animate-pulse"
                     style={{ animationDelay: "0.2s" }}
                   />
                   <div
-                    className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"
+                    className="w-2 h-2 bg-[#9fb08c] rounded-full animate-pulse"
                     style={{ animationDelay: "0.4s" }}
                   />
                 </div>
@@ -164,39 +164,39 @@ export default function Basket() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="group relative bg-gradient-to-r from-white to-emerald-50/30 border border-emerald-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300 hover:border-emerald-200"
+                    className="group relative bg-white border border-[#d1d9c0] rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300 hover:border-[#b8c4a8]"
                   >
                     {/* Decorative background elements */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-[#edf1e6]/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     <div className="relative flex items-center space-x-4">
                       {/* Enhanced product image */}
                       <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-200 to-blue-200 rounded-lg opacity-20 blur-sm" />
+                        <div className="absolute inset-0 bg-[#d1d9c0] rounded-lg opacity-20 blur-sm" />
                         <img
                           src={item.image}
                           alt={item.name}
                           className="relative w-20 h-20 object-cover rounded-lg shadow-md border-2 border-white"
                         />
                         {/* Quantity badge overlay */}
-                        <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
+                        <div className="absolute -top-2 -right-2 bg-[#2d4a3e] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
                           {item.quantity}
                         </div>
                       </div>
 
                       {/* Product info with enhanced styling */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 text-lg mb-1 truncate group-hover:text-emerald-700 transition-colors">
+                        <h3 className="font-semibold text-[#2d4a3e] text-lg mb-1 truncate group-hover:text-[#1a2f26] transition-colors">
                           {item.name}
                         </h3>
-                        <p className="text-sm text-gray-500 mb-2">
+                        <p className="text-sm text-[#4a6b5a] mb-2">
                           {item.description || "Premium superfood blend"}
                         </p>
                         <div className="flex items-center space-x-2">
-                          <span className="text-lg font-bold text-emerald-600">
+                          <span className="text-lg font-bold text-[#2d4a3e]">
                             ${item.price.toFixed(2)}
                           </span>
-                          <span className="text-sm text-gray-400">each</span>
+                          <span className="text-sm text-[#6b8a7a]">each</span>
                         </div>
                       </div>
 
@@ -206,19 +206,19 @@ export default function Basket() {
                           onClick={() =>
                             updateQuantity(item.id, item.quantity - 1)
                           }
-                          className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-all duration-200 hover:scale-105"
+                          className="w-8 h-8 flex items-center justify-center text-[#6b8a7a] hover:text-[#2d4a3e] hover:bg-[#edf1e6] rounded-md transition-all duration-200 hover:scale-105"
                           aria-label="Decrease quantity"
                         >
                           <FaMinus className="h-3 w-3" />
                         </button>
-                        <span className="w-8 text-center text-sm font-bold text-gray-700">
+                        <span className="w-8 text-center text-sm font-bold text-[#2d4a3e]">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.quantity + 1)
                           }
-                          className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-all duration-200 hover:scale-105"
+                          className="w-8 h-8 flex items-center justify-center text-[#6b8a7a] hover:text-[#2d4a3e] hover:bg-[#edf1e6] rounded-md transition-all duration-200 hover:scale-105"
                           aria-label="Increase quantity"
                         >
                           <FaPlus className="h-3 w-3" />
@@ -247,33 +247,33 @@ export default function Basket() {
 
           {/* Footer */}
           {state.items.length > 0 && (
-            <div className="relative bg-gradient-to-r from-gray-50 to-emerald-50 border-t border-emerald-100 p-6">
+            <div className="relative bg-[#edf1e6] border-t border-[#d1d9c0] p-6">
               {/* Decorative background */}
-              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(16,185,129,0.02)_25%,rgba(16,185,129,0.02)_75%,transparent_75%)] bg-[size:15px_15px] opacity-40" />
+              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(45,74,62,0.02)_25%,rgba(45,74,62,0.02)_75%,transparent_75%)] bg-[size:15px_15px] opacity-40" />
 
               <div className="relative">
                 {/* Total section with enhanced styling */}
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 mb-4 border border-emerald-100 shadow-sm">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 mb-4 border border-[#d1d9c0] shadow-sm">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-medium text-gray-700">
+                    <span className="text-lg font-medium text-[#2d4a3e]">
                       Subtotal:
                     </span>
-                    <span className="text-lg font-medium text-gray-700">
+                    <span className="text-lg font-medium text-[#2d4a3e]">
                       ${state.total.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-500">Shipping:</span>
-                    <span className="text-sm text-emerald-600 font-medium">
+                    <span className="text-sm text-[#4a6b5a]">Shipping:</span>
+                    <span className="text-sm text-[#2d4a3e] font-medium">
                       {state.total >= 50 ? "FREE" : "$5.99"}
                     </span>
                   </div>
-                  <div className="border-t border-emerald-100 pt-2">
+                  <div className="border-t border-[#d1d9c0] pt-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold text-gray-900">
+                      <span className="text-xl font-bold text-[#2d4a3e]">
                         Total:
                       </span>
-                      <span className="text-2xl font-bold text-emerald-600">
+                      <span className="text-2xl font-bold text-[#2d4a3e]">
                         $
                         {(state.total >= 50
                           ? state.total
@@ -282,7 +282,7 @@ export default function Basket() {
                       </span>
                     </div>
                     {state.total < 50 && (
-                      <p className="text-xs text-emerald-600 text-center mt-1">
+                      <p className="text-xs text-[#2d4a3e] text-center mt-1">
                         Add ${(50 - state.total).toFixed(2)} more for free
                         shipping!
                       </p>
@@ -294,10 +294,10 @@ export default function Basket() {
                 <button
                   onClick={handleCheckout}
                   disabled={isCheckingOut}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
+                  className="w-full bg-[#2d4a3e] text-white py-4 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
                 >
                   {/* Button background animation */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-[#1a2f26] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Button content */}
                   <div className="relative flex items-center justify-center space-x-2">
@@ -328,10 +328,10 @@ export default function Basket() {
                 </button>
 
                 {/* Security badges */}
-                <div className="flex items-center justify-center space-x-4 mt-4 text-xs text-gray-500">
+                <div className="flex items-center justify-center space-x-4 mt-4 text-xs text-[#4a6b5a]">
                   <div className="flex items-center space-x-1">
                     <svg
-                      className="w-4 h-4 text-emerald-500"
+                      className="w-4 h-4 text-[#2d4a3e]"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -345,7 +345,7 @@ export default function Basket() {
                   </div>
                   <div className="flex items-center space-x-1">
                     <svg
-                      className="w-4 h-4 text-emerald-500"
+                      className="w-4 h-4 text-[#2d4a3e]"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
