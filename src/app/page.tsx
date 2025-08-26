@@ -3,6 +3,7 @@
 import { OurApp } from "@/screens/OurApp";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
+
 import {
   BuySection,
   FAQSection,

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthProvider } from "../contexts/AuthContext";
 import { BasketProvider } from "../contexts/BasketContext";
 import { NotificationProvider } from "../contexts/NotificationContext";
 import "./globals.css";
@@ -40,7 +41,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
       >
         <BasketProvider>
-          <NotificationProvider>{children}</NotificationProvider>
+          <NotificationProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </NotificationProvider>
         </BasketProvider>
       </body>
     </html>

@@ -3,18 +3,22 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { MdOutlinePersonOutline } from "react-icons/md";
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FaSignOutAlt, FaUser } from "react-icons/fa";
+import { useAuth } from "../contexts/AuthContext";
 import { useBasket } from "../contexts/BasketContext";
+import AuthModal from "./AuthModal";
 import Basket from "./Basket";
 import BasketIcon from "./BasketIcon";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { state, setIsBasketOpen } = useBasket();
+  const { user, signOut } = useAuth();
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const isHomePage = pathname === "/";
@@ -247,12 +251,28 @@ export function Header() {
             <nav className="hidden lg:flex justify-end w-1/3 px-4">
               <ul className="flex items-center space-x-10">
                 <li>
-                  <Link
-                    href="/account"
-                    className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
-                  >
-                    <MdOutlinePersonOutline className="w-7 h-7" />
-                  </Link>
+                  {user ? (
+                    <div className="flex items-center space-x-3">
+                      <span className="text-sm text-gray-700">
+                        {user.email}
+                      </span>
+                      <button
+                        onClick={() => signOut()}
+                        className="text-gray-600 hover:text-red-600 transition-colors"
+                        aria-label="Sign out"
+                      >
+                        <FaSignOutAlt className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsAuthModalOpen(true)}
+                      className="flex items-center space-x-2 text-base font-medium text-black hover:text-amber-500 transition-colors"
+                    >
+                      <FaUser className="w-5 h-5" />
+                      <span>Sign In</span>
+                    </button>
+                  )}
                 </li>
                 <li>
                   <BasketIcon onClick={() => setIsBasketOpen(true)} />
@@ -321,6 +341,12 @@ export function Header() {
 
       {/* Basket Component */}
       <Basket />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </>
   );
 }
