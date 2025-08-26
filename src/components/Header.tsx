@@ -19,7 +19,6 @@ export function Header() {
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
-  const [activeMenuItem, setActiveMenuItem] = useState("details");
   const { state, setIsBasketOpen } = useBasket();
   const { user, signOut } = useAuth();
   const { scrollY } = useScroll();
@@ -212,6 +211,43 @@ export function Header() {
                 priority
               />
             </Link>
+
+            {/* Mobile Account Icon */}
+            <div className="flex items-center justify-self-end space-x-4">
+              {user ? (
+                <button
+                  onClick={() => setIsAccountMenuOpen(true)}
+                  className="flex items-center space-x-1 text-gray-600 hover:text-amber-500 transition-colors"
+                  aria-label="Open account menu"
+                >
+                  <FaUser className="w-5 h-5" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {(() => {
+                      const fullName = user.user_metadata?.full_name;
+                      if (!fullName) return "U";
+                      const names = fullName.split(" ");
+                      if (names.length >= 2) {
+                        return `${names[0].charAt(0).toUpperCase()}${names[1]
+                          .charAt(0)
+                          .toUpperCase()}`;
+                      }
+                      return names[0].charAt(0).toUpperCase();
+                    })()}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-amber-500 transition-colors"
+                  aria-label="Sign in"
+                >
+                  <FaUser className="w-5 h-5" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Sign in
+                  </span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Desktop row */}
@@ -353,78 +389,6 @@ export function Header() {
                   </Link>
                 </li>
               ))}
-
-              {/* Account Section */}
-              <li className="pt-4 border-t border-gray-200">
-                {user ? (
-                  <div className="space-y-3">
-                    {/* User Info */}
-                    <div className="flex items-center space-x-3 px-1">
-                      <FaUser className="w-5 h-5 text-gray-600" />
-                      <span className="text-lg font-medium text-gray-700">
-                        {(() => {
-                          const fullName = user.user_metadata?.full_name;
-                          if (!fullName) return "User";
-                          const names = fullName.split(" ");
-                          if (names.length >= 2) {
-                            return `${
-                              names[0].charAt(0).toUpperCase() +
-                              names[0].slice(1)
-                            } ${names[1].charAt(0).toUpperCase()}`;
-                          }
-                          return (
-                            names[0].charAt(0).toUpperCase() + names[0].slice(1)
-                          );
-                        })()}
-                      </span>
-                    </div>
-
-                    {/* Account Menu Items */}
-                    {[
-                      { id: "details", label: "Account Details", icon: "👤" },
-                      { id: "billing", label: "Billing Info", icon: "💳" },
-                      { id: "subscription", label: "Subscription", icon: "📅" },
-                      { id: "settings", label: "Settings", icon: "⚙️" },
-                    ].map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          setIsAccountMenuOpen(true);
-                          setActiveMenuItem(item.id);
-                        }}
-                        className="w-full text-left px-1 py-2 text-base font-medium text-gray-700 hover:text-amber-600 transition-colors"
-                      >
-                        <span className="mr-3">{item.icon}</span>
-                        {item.label}
-                      </button>
-                    ))}
-
-                    {/* Logout Button */}
-                    <button
-                      onClick={() => {
-                        signOut();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full text-left px-1 py-2 text-base font-medium text-red-600 hover:text-red-700 transition-colors"
-                    >
-                      <span className="mr-3">🚪</span>
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="w-full text-left px-1 py-2 text-base font-medium text-gray-700 hover:text-amber-600 transition-colors"
-                  >
-                    <FaUser className="w-5 h-5 inline mr-3" />
-                    Sign In
-                  </button>
-                )}
-              </li>
             </ul>
           </motion.div>
         </div>
@@ -443,8 +407,6 @@ export function Header() {
       <AccountMenu
         isOpen={isAccountMenuOpen}
         onClose={() => setIsAccountMenuOpen(false)}
-        activeMenuItem={activeMenuItem}
-        onMenuItemChange={setActiveMenuItem}
       />
     </div>
   );
