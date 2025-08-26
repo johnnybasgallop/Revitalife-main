@@ -6,9 +6,10 @@ import Link from "next/link";
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthContext";
 import { useBasket } from "../contexts/BasketContext";
+import AccountMenu from "./AccountMenu";
 import AuthModal from "./AuthModal";
 import Basket from "./Basket";
 import BasketIcon from "./BasketIcon";
@@ -17,6 +18,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const { state, setIsBasketOpen } = useBasket();
   const { user, signOut } = useAuth();
   const { scrollY } = useScroll();
@@ -128,7 +130,7 @@ export function Header() {
   };
 
   return (
-    <>
+    <div className={`${isAccountMenuOpen ? "overflow-hidden" : ""}`}>
       <div className="sticky top-0 z-50 flex flex-col">
         {/* Scrolling announcement bar (3 items per loop, seamless) */}
         <div className="relative z-30 w-full bg-[#edf1e6] h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
@@ -252,17 +254,33 @@ export function Header() {
               <ul className="flex items-center space-x-10">
                 <li>
                   {user ? (
-                    <div className="flex items-center space-x-3">
-                      <span className="text-sm text-gray-700">
-                        {user.email}
-                      </span>
+                    <div className="relative">
                       <button
-                        onClick={() => signOut()}
-                        className="text-gray-600 hover:text-red-600 transition-colors"
-                        aria-label="Sign out"
+                        onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                        className="flex items-center space-x-2 hover:text-amber-500 transition-colors"
                       >
-                        <FaSignOutAlt className="w-5 h-5" />
+                        <FaUser className="w-5 h-5 text-gray-600" />
+                        <span className="text-sm font-medium text-gray-700">
+                          {(() => {
+                            const fullName = user.user_metadata?.full_name;
+                            if (!fullName) return "User";
+                            const names = fullName.split(" ");
+                            if (names.length >= 2) {
+                              return `${
+                                names[0].charAt(0).toUpperCase() +
+                                names[0].slice(1)
+                              } ${names[1].charAt(0).toUpperCase()}`;
+                            }
+                            return (
+                              names[0].charAt(0).toUpperCase() +
+                              names[0].slice(1)
+                            );
+                          })()}
+                        </span>
                       </button>
+
+                      {/* Account Menu Dropdown */}
+                      {/* Account Menu Dropdown */}
                     </div>
                   ) : (
                     <button
@@ -347,6 +365,12 @@ export function Header() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
       />
-    </>
+
+      {/* Account Menu */}
+      <AccountMenu
+        isOpen={isAccountMenuOpen}
+        onClose={() => setIsAccountMenuOpen(false)}
+      />
+    </div>
   );
 }
