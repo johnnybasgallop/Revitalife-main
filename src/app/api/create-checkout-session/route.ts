@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
       },
 
       // Enhanced branding and customization
-      submit_type: "pay", // More professional than "auto"
+      ...(hasSubscriptions ? {} : { submit_type: "pay" }), // Only set submit_type for one-time payments
       allow_promotion_codes: true, // Enable discount codes
       locale: "en-GB", // Force UK locale
 
