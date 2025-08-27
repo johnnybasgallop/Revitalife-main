@@ -20,6 +20,7 @@ export type Database = {
           full_name: string | null;
           created_at: string | null;
           updated_at: string | null;
+          stripe_customer_id: string | null; // Add Stripe customer ID
         };
         Insert: {
           id: string;
@@ -27,6 +28,7 @@ export type Database = {
           full_name?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
+          stripe_customer_id?: string | null;
         };
         Update: {
           id?: string;
@@ -34,6 +36,7 @@ export type Database = {
           full_name?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
+          stripe_customer_id?: string | null;
         };
       };
       subscriptions: {
@@ -48,6 +51,9 @@ export type Database = {
           current_period_end: string | null;
           created_at: string | null;
           updated_at: string | null;
+          stripe_price_id: string | null; // Add Stripe price ID
+          quantity: number | null; // Add quantity
+          cancel_at_period_end: boolean | null; // Add cancellation flag
         };
         Insert: {
           id?: string;
@@ -60,6 +66,9 @@ export type Database = {
           current_period_end?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
+          stripe_price_id?: string | null;
+          quantity?: number | null;
+          cancel_at_period_end?: boolean | null;
         };
         Update: {
           id?: string;
@@ -72,6 +81,9 @@ export type Database = {
           current_period_end?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
+          stripe_price_id?: string | null;
+          quantity?: number | null;
+          cancel_at_period_end?: boolean | null;
         };
       };
     };

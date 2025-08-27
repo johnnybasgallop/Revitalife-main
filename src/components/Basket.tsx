@@ -37,6 +37,7 @@ export default function Basket() {
         body: JSON.stringify({
           items: state.items,
           customerId: user?.id, // Pass customer ID for subscriptions
+          userEmail: user?.email, // Pass user email for customer creation
         }),
       });
 
@@ -272,9 +273,9 @@ export default function Basket() {
                     <span className="text-sm text-[#4a6b5a]">Shipping:</span>
                     <span className="text-sm text-[#2d4a3e] font-medium">
                       {state.items.some((item) => item.isSubscription) ||
-                      state.total >= 50
+                      state.total >= 40
                         ? "FREE"
-                        : "$5.99"}
+                        : "£4.99"}
                     </span>
                   </div>
                   <div className="border-t border-[#d1d9c0] pt-2">
@@ -283,18 +284,18 @@ export default function Basket() {
                         Total:
                       </span>
                       <span className="text-2xl font-bold text-[#2d4a3e]">
-                        $
+                        £
                         {(state.items.some((item) => item.isSubscription) ||
-                        state.total >= 50
+                        state.total >= 40
                           ? state.total
-                          : state.total + 5.99
+                          : state.total + 4.99
                         ).toFixed(2)}
                       </span>
                     </div>
                     {!state.items.some((item) => item.isSubscription) &&
-                      state.total < 50 && (
+                      state.total < 40 && (
                         <p className="text-xs text-[#2d4a3e] text-center mt-1">
-                          Add ${(50 - state.total).toFixed(2)} more for free
+                          Add £{(40 - state.total).toFixed(2)} more for free
                           shipping!
                         </p>
                       )}

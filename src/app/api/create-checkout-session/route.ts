@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-07-30.basil",
 });
+
+// Stripe Price IDs - replace these with your actual price IDs from Stripe Dashboard
+const STRIPE_PRICES = {
+  oneTime: process.env.STRIPE_ONETIME_PRICE_ID || "price_1ABC123...", // Replace with actual price ID
+  subscription: process.env.STRIPE_SUBSCRIPTION_PRICE_ID || "price_1XYZ789...", // Replace with actual price ID
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +22,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { items, customerId } = await request.json();
+    const { items, customerId, userEmail } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "No items provided" }, { status: 400 });
@@ -32,62 +38,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create line items for Stripe
-    const lineItems = items.map((item: any) => {
-      // Convert relative image URLs to absolute URLs for Stripe
-      const imageUrl = item.image.startsWith("http")
-        ? item.image
-        : `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${
-            item.image
-          }`;
+    let stripeCustomerId = customerId;
 
-      if (item.isSubscription) {
-        // For subscriptions, we need to create a price ID or use recurring pricing
+    // If we have subscriptions and a customer ID, ensure the customer exists in Stripe
+    if (hasSubscriptions && customerId) {
+      try {
+        // Try to retrieve the customer from Stripe
+        await stripe.customers.retrieve(customerId);
+        stripeCustomerId = customerId;
+      } catch (error: any) {
+        // If customer doesn't exist in Stripe, create a new one
+        if (error.code === "resource_missing") {
+          console.log(`Creating new Stripe customer for user: ${customerId}`);
+          const newCustomer = await stripe.customers.create({
+            email: userEmail,
+            metadata: {
+              source: "revitalife_app",
+              supabase_user_id: customerId,
+            },
+          });
+          stripeCustomerId = newCustomer.id;
+          console.log(`Created Stripe customer: ${stripeCustomerId}`);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    // Create line items using pre-created Stripe Price IDs
+    const lineItems = items.map((item: any) => {
+      // Use the stripePriceId from the basket item if available, otherwise fall back to default prices
+      if (item.stripePriceId) {
         return {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: item.name,
-              description:
-                item.description ||
-                "Premium superfood blend with natural ingredients for optimal wellness and vitality.",
-              images: [imageUrl],
-              metadata: {
-                flavor: "Mango",
-                servings: "30",
-                category: "Superfoods",
-                subscription: "true",
-                interval: item.subscriptionInterval || "monthly",
-              },
-            },
-            unit_amount: Math.round(item.price * 100), // Convert to cents
-            recurring: {
-              interval:
-                item.subscriptionInterval === "monthly" ? "month" : "month",
-            },
-          },
+          price: item.stripePriceId,
+          quantity: item.quantity,
+        };
+      } else if (item.isSubscription) {
+        // Use pre-created subscription price ID
+        return {
+          price: STRIPE_PRICES.subscription,
           quantity: item.quantity,
         };
       } else {
-        // For one-time purchases
+        // Use pre-created one-time price ID
         return {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: item.name,
-              description:
-                item.description ||
-                "Premium superfood blend with natural ingredients for optimal wellness and vitality.",
-              images: [imageUrl],
-              metadata: {
-                flavor: "Mango",
-                servings: "30",
-                category: "Superfoods",
-                subscription: "false",
-              },
-            },
-            unit_amount: Math.round(item.price * 100), // Convert to cents
-          },
+          price: STRIPE_PRICES.oneTime,
           quantity: item.quantity,
         };
       }
@@ -98,11 +93,12 @@ export async function POST(request: NextRequest) {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: hasSubscriptions ? "subscription" : "payment",
+      currency: "gbp", // Force GBP currency
 
       // Customer configuration for subscriptions
       ...(hasSubscriptions &&
-        customerId && {
-          customer: customerId,
+        stripeCustomerId && {
+          customer: stripeCustomerId,
         }),
 
       // Success and cancel URLs
@@ -119,14 +115,15 @@ export async function POST(request: NextRequest) {
       // Billing address collection
       billing_address_collection: "required",
 
-      // Shipping address collection
+      // Shipping address collection (UK-focused)
       shipping_address_collection: {
-        allowed_countries: ["US", "CA", "GB", "AU"], // Customize based on where you ship
+        allowed_countries: ["GB", "IE", "DE", "FR", "NL", "BE"], // UK and nearby EU countries
       },
 
       // Enhanced branding and customization
       submit_type: "pay", // More professional than "auto"
       allow_promotion_codes: true, // Enable discount codes
+      locale: "en-GB", // Force UK locale
 
       // Custom text and branding
       custom_text: {
@@ -152,10 +149,13 @@ export async function POST(request: NextRequest) {
           }))
         ),
         hasSubscriptions: hasSubscriptions.toString(),
+        customer_id: stripeCustomerId || "guest",
+        currency: "gbp",
+        country: "gb",
       },
     };
 
-    // Add shipping options only for one-time purchases
+    // Add shipping options only for one-time purchases (GBP pricing)
     if (!hasSubscriptions) {
       sessionConfig.shipping_options = [
         {
@@ -163,17 +163,17 @@ export async function POST(request: NextRequest) {
             type: "fixed_amount",
             fixed_amount: {
               amount: 0,
-              currency: "usd",
+              currency: "gbp",
             },
-            display_name: "Free shipping",
+            display_name: "Free UK shipping",
             delivery_estimate: {
               minimum: {
                 unit: "business_day",
-                value: 3,
+                value: 2,
               },
               maximum: {
                 unit: "business_day",
-                value: 7,
+                value: 5,
               },
             },
           },
@@ -182,10 +182,10 @@ export async function POST(request: NextRequest) {
           shipping_rate_data: {
             type: "fixed_amount",
             fixed_amount: {
-              amount: 599, // $5.99 in cents
-              currency: "usd",
+              amount: 499, // £4.99 in pence
+              currency: "gbp",
             },
-            display_name: "Express shipping",
+            display_name: "Express UK shipping",
             delivery_estimate: {
               minimum: {
                 unit: "business_day",
@@ -193,7 +193,27 @@ export async function POST(request: NextRequest) {
               },
               maximum: {
                 unit: "business_day",
+                value: 2,
+              },
+            },
+          },
+        },
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: 999, // £9.99 in pence
+              currency: "gbp",
+            },
+            display_name: "International shipping",
+            delivery_estimate: {
+              minimum: {
+                unit: "business_day",
                 value: 3,
+              },
+              maximum: {
+                unit: "business_day",
+                value: 7,
               },
             },
           },
@@ -211,6 +231,7 @@ export async function POST(request: NextRequest) {
       status: session.status,
       mode: session.mode,
       hasSubscriptions,
+      customerId: stripeCustomerId,
     });
 
     if (!session.url) {

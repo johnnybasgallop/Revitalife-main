@@ -17,6 +17,7 @@ export interface BasketItem {
   description?: string;
   isSubscription?: boolean;
   subscriptionInterval?: string;
+  stripePriceId?: string;
 }
 
 interface BasketState {

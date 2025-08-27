@@ -1,6 +1,6 @@
 "use client";
 import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import AuthModal from "../components/AuthModal";
@@ -9,6 +9,22 @@ import ScrollReveal from "../components/ScrollReveal";
 import { useAuth } from "../contexts/AuthContext";
 import { useBasket } from "../contexts/BasketContext";
 import { useNotification } from "../contexts/NotificationContext";
+
+interface PricingData {
+  oneTime: {
+    original: number;
+    sale: number;
+    savings: number;
+    priceId: string;
+  };
+  subscription: {
+    original: number;
+    sale: number;
+    savings: number;
+    interval: string;
+    priceId: string;
+  };
+}
 
 export function BuySection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -19,6 +35,8 @@ export function BuySection() {
   const [showFlyingProduct, setShowFlyingProduct] = useState(false);
   const [isSubscription, setIsSubscription] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pricing, setPricing] = useState<PricingData | null>(null);
+  const [pricingLoading, setPricingLoading] = useState(true);
   const { addItem } = useBasket();
   const { addNotification } = useNotification();
   const { user } = useAuth();
@@ -29,24 +47,51 @@ export function BuySection() {
     "/prod/prod3.jpg",
   ];
 
-  // Pricing configuration
-  const pricing = {
-    oneTime: {
-      original: 69.99,
-      sale: 59.99,
-      savings: 15,
-    },
-    subscription: {
-      original: 69.99,
-      sale: 49.99,
-      savings: 29,
-      interval: "monthly",
-    },
-  };
+  // Fetch pricing from Stripe on component mount
+  useEffect(() => {
+    const fetchPricing = async () => {
+      try {
+        const response = await fetch("/api/get-product-prices");
+        if (response.ok) {
+          const data = await response.json();
+          setPricing(data.pricing);
+        } else {
+          console.error("Failed to fetch pricing");
+          // Fallback to default pricing (GBP)
+          setPricing({
+            oneTime: { original: 56.99, sale: 47.99, savings: 16, priceId: "" },
+            subscription: {
+              original: 56.99,
+              sale: 39.99,
+              savings: 30,
+              interval: "monthly",
+              priceId: "",
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching pricing:", error);
+        // Fallback to default pricing (GBP)
+        setPricing({
+          oneTime: { original: 56.99, sale: 47.99, savings: 16, priceId: "" },
+          subscription: {
+            original: 56.99,
+            sale: 39.99,
+            savings: 30,
+            interval: "monthly",
+            priceId: "",
+          },
+        });
+      } finally {
+        setPricingLoading(false);
+      }
+    };
 
-  const currentPricing = isSubscription
-    ? pricing.subscription
-    : pricing.oneTime;
+    fetchPricing();
+  }, []);
+
+  const currentPricing =
+    pricing && isSubscription ? pricing.subscription : pricing?.oneTime;
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
@@ -73,12 +118,32 @@ export function BuySection() {
       return;
     }
 
+    if (!pricing) {
+      addNotification({
+        type: "error",
+        title: "Pricing Error",
+        message: "Unable to load product pricing. Please refresh the page.",
+      });
+      return;
+    }
+
+    // Validate that we have the required price IDs
+    if (!pricing.oneTime.priceId || !pricing.subscription.priceId) {
+      addNotification({
+        type: "error",
+        title: "Configuration Error",
+        message:
+          "Product pricing is not properly configured. Please contact support.",
+      });
+      return;
+    }
+
     setIsAddingToCart(true);
 
     // Simulate a brief loading state
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // Add item to basket with subscription info
+    // Add item to basket with subscription info and Stripe Price ID
     addItem({
       id: `revitalife-superfood-mix-${
         isSubscription ? "subscription" : "one-time"
@@ -86,7 +151,7 @@ export function BuySection() {
       name: `Revitalife Superfood Mix ${
         isSubscription ? "(Monthly Subscription)" : "(One-time)"
       }`,
-      price: currentPricing.sale,
+      price: currentPricing!.sale,
       quantity: quantity,
       image: productImages[currentImageIndex],
       description: `Mango Flavor • 30 Servings ${
@@ -94,6 +159,9 @@ export function BuySection() {
       }`,
       isSubscription: isSubscription,
       subscriptionInterval: isSubscription ? "monthly" : undefined,
+      stripePriceId: isSubscription
+        ? pricing.subscription.priceId
+        : pricing.oneTime.priceId,
     });
 
     // Show flying product animation
@@ -321,15 +389,28 @@ export function BuySection() {
                     duration={0.8}
                   >
                     <div className="flex items-end mb-6">
-                      <p className="text-4xl font-bold text-gray-900">
-                        ${currentPricing.sale}
-                      </p>
-                      <p className="text-xl text-gray-500 line-through ml-2">
-                        ${currentPricing.original}
-                      </p>
-                      <p className="text-sm text-emerald-600 font-semibold ml-3 px-2 py-1 bg-emerald-50 rounded">
-                        Save {currentPricing.savings}%
-                      </p>
+                      {pricingLoading ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-8 h-8 border-2 border-gray-300 border-t-[#2d4a3e] rounded-full animate-spin" />
+                          <span className="text-gray-500">
+                            Loading pricing...
+                          </span>
+                        </div>
+                      ) : currentPricing ? (
+                        <>
+                          <p className="text-4xl font-bold text-gray-900">
+                            ${currentPricing.sale}
+                          </p>
+                          <p className="text-xl text-gray-500 line-through ml-2">
+                            ${currentPricing.original}
+                          </p>
+                          <p className="text-sm text-emerald-600 font-semibold ml-3 px-2 py-1 bg-emerald-50 rounded">
+                            Save {currentPricing.savings}%
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-red-500">Pricing unavailable</p>
+                      )}
                     </div>
                   </ScrollReveal>
 

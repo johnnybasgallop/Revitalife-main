@@ -61,17 +61,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (data.user && !error) {
+        console.log("User created successfully:", data.user);
+        console.log("User ID:", data.user.id);
+        console.log("User email:", data.user.email);
+
         try {
-          // Create profile record
+          // Wait a moment for user to be fully created in auth.users
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          // Create profile record directly (user was created successfully above)
+          const profileData = {
+            id: data.user.id,
+            email: data.user.email,
+            full_name: fullName,
+          };
+          console.log("Attempting to create profile with data:", profileData);
+
           const { error: profileError } = await supabase
             .from("profiles")
-            .insert([
-              {
-                id: data.user.id,
-                email: data.user.email,
-                full_name: fullName,
-              },
-            ]);
+            .insert([profileData]);
 
           if (profileError) {
             console.error("Error creating profile:", profileError);
