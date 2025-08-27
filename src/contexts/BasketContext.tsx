@@ -15,6 +15,8 @@ export interface BasketItem {
   quantity: number;
   image: string;
   description?: string;
+  isSubscription?: boolean;
+  subscriptionInterval?: string;
 }
 
 interface BasketState {

@@ -16,10 +16,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { items } = await request.json();
+    const { items, customerId } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "No items provided" }, { status: 400 });
+    }
+
+    // Check if any items are subscriptions
+    const hasSubscriptions = items.some((item: any) => item.isSubscription);
+
+    if (hasSubscriptions && !customerId) {
+      return NextResponse.json(
+        { error: "Customer ID required for subscriptions" },
+        { status: 400 }
+      );
     }
 
     // Create line items for Stripe
@@ -31,35 +41,123 @@ export async function POST(request: NextRequest) {
             item.image
           }`;
 
-      return {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: item.name,
-            description:
-              item.description ||
-              "Premium superfood blend with natural ingredients for optimal wellness and vitality.",
-            images: [imageUrl],
-            metadata: {
-              flavor: "Mango",
-              servings: "30",
-              category: "Superfoods",
+      if (item.isSubscription) {
+        // For subscriptions, we need to create a price ID or use recurring pricing
+        return {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: item.name,
+              description:
+                item.description ||
+                "Premium superfood blend with natural ingredients for optimal wellness and vitality.",
+              images: [imageUrl],
+              metadata: {
+                flavor: "Mango",
+                servings: "30",
+                category: "Superfoods",
+                subscription: "true",
+                interval: item.subscriptionInterval || "monthly",
+              },
+            },
+            unit_amount: Math.round(item.price * 100), // Convert to cents
+            recurring: {
+              interval:
+                item.subscriptionInterval === "monthly" ? "month" : "month",
             },
           },
-          unit_amount: Math.round(item.price * 100), // Convert to cents
-        },
-        quantity: item.quantity,
-      };
+          quantity: item.quantity,
+        };
+      } else {
+        // For one-time purchases
+        return {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: item.name,
+              description:
+                item.description ||
+                "Premium superfood blend with natural ingredients for optimal wellness and vitality.",
+              images: [imageUrl],
+              metadata: {
+                flavor: "Mango",
+                servings: "30",
+                category: "Superfoods",
+                subscription: "false",
+              },
+            },
+            unit_amount: Math.round(item.price * 100), // Convert to cents
+          },
+          quantity: item.quantity,
+        };
+      }
     });
 
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
+    // Create checkout session configuration
+    const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
       line_items: lineItems,
-      mode: "payment",
+      mode: hasSubscriptions ? "subscription" : "payment",
 
-      // Shipping options (you can customize these)
-      shipping_options: [
+      // Customer configuration for subscriptions
+      ...(hasSubscriptions &&
+        customerId && {
+          customer: customerId,
+        }),
+
+      // Success and cancel URLs
+      success_url: `${
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+      }/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+      }/cancel`,
+
+      // Customer email collection (only for one-time purchases)
+      ...(hasSubscriptions ? {} : { customer_email: undefined }),
+
+      // Billing address collection
+      billing_address_collection: "required",
+
+      // Shipping address collection
+      shipping_address_collection: {
+        allowed_countries: ["US", "CA", "GB", "AU"], // Customize based on where you ship
+      },
+
+      // Enhanced branding and customization
+      submit_type: "pay", // More professional than "auto"
+      allow_promotion_codes: true, // Enable discount codes
+
+      // Custom text and branding
+      custom_text: {
+        submit: {
+          message: hasSubscriptions
+            ? "Your subscription will be processed securely by Stripe. You'll be charged monthly and can cancel anytime."
+            : "Your order will be processed securely by Stripe. You'll receive a confirmation email once payment is complete.",
+        },
+        shipping_address: {
+          message:
+            "We'll ship your order to this address. Please ensure it's correct for timely delivery.",
+        },
+      },
+
+      metadata: {
+        items: JSON.stringify(
+          items.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            isSubscription: item.isSubscription,
+            subscriptionInterval: item.subscriptionInterval,
+          }))
+        ),
+        hasSubscriptions: hasSubscriptions.toString(),
+      },
+    };
+
+    // Add shipping options only for one-time purchases
+    if (!hasSubscriptions) {
+      sessionConfig.shipping_options = [
         {
           shipping_rate_data: {
             type: "fixed_amount",
@@ -100,58 +198,19 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-      ],
+      ];
+    }
 
-      success_url: `${
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-      }/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-      }/cancel`,
-
-      // Customer email collection
-      customer_email: undefined, // Will prompt customer to enter email
-
-      // Billing address collection
-      billing_address_collection: "required",
-
-      // Shipping address collection
-      shipping_address_collection: {
-        allowed_countries: ["US", "CA", "GB", "AU"], // Customize based on where you ship
-      },
-
-      // Enhanced branding and customization
-      submit_type: "pay", // More professional than "auto"
-      allow_promotion_codes: true, // Enable discount codes
-
-      // Custom text and branding
-      custom_text: {
-        submit: {
-          message:
-            "Your order will be processed securely by Stripe. You'll receive a confirmation email once payment is complete.",
-        },
-        shipping_address: {
-          message:
-            "We'll ship your order to this address. Please ensure it's correct for timely delivery.",
-        },
-      },
-
-      metadata: {
-        items: JSON.stringify(
-          items.map((item: any) => ({
-            id: item.id,
-            name: item.name,
-            quantity: item.quantity,
-          }))
-        ),
-      },
-    });
+    // Create checkout session
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     // Log the session details for debugging
     console.log("Stripe session created:", {
       id: session.id,
       url: session.url,
       status: session.status,
+      mode: session.mode,
+      hasSubscriptions,
     });
 
     if (!session.url) {

@@ -3,16 +3,29 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
+import { useAuth } from "../contexts/AuthContext";
 import { useBasket } from "../contexts/BasketContext";
 import { useNotification } from "../contexts/NotificationContext";
 
 export default function Basket() {
   const { state, removeItem, updateQuantity, setIsBasketOpen } = useBasket();
   const { addNotification } = useNotification();
+  const { user } = useAuth();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const handleCheckout = async () => {
     if (state.items.length === 0) return;
+
+    // Check if user is authenticated for subscriptions
+    const hasSubscriptions = state.items.some((item) => item.isSubscription);
+    if (hasSubscriptions && !user) {
+      addNotification({
+        type: "error",
+        title: "Authentication Required",
+        message: "You must be logged in to purchase subscriptions",
+      });
+      return;
+    }
 
     setIsCheckingOut(true);
     try {
@@ -23,6 +36,7 @@ export default function Basket() {
         },
         body: JSON.stringify({
           items: state.items,
+          customerId: user?.id, // Pass customer ID for subscriptions
         }),
       });
 
@@ -168,9 +182,16 @@ export default function Basket() {
                   >
                     {/* Decorative background elements */}
                     <div className="absolute inset-0 bg-[#edf1e6]/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <h3 className="font-semibold pb-4 text-[#2d4a3e] text-lg mb-1 truncate group-hover:text-[#1a2f26] transition-colors">
-                      {item.name}
-                    </h3>
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-semibold text-[#2d4a3e] text-lg truncate group-hover:text-[#1a2f26] transition-colors">
+                        {item.name}
+                      </h3>
+                      {item.isSubscription && (
+                        <span className="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                          SUBSCRIPTION
+                        </span>
+                      )}
+                    </div>
                     <div className="relative flex items-center space-x-8">
                       {/* Enhanced product image */}
                       <div className="relative">
@@ -250,7 +271,10 @@ export default function Basket() {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-[#4a6b5a]">Shipping:</span>
                     <span className="text-sm text-[#2d4a3e] font-medium">
-                      {state.total >= 50 ? "FREE" : "$5.99"}
+                      {state.items.some((item) => item.isSubscription) ||
+                      state.total >= 50
+                        ? "FREE"
+                        : "$5.99"}
                     </span>
                   </div>
                   <div className="border-t border-[#d1d9c0] pt-2">
@@ -260,16 +284,23 @@ export default function Basket() {
                       </span>
                       <span className="text-2xl font-bold text-[#2d4a3e]">
                         $
-                        {(state.total >= 50
+                        {(state.items.some((item) => item.isSubscription) ||
+                        state.total >= 50
                           ? state.total
                           : state.total + 5.99
                         ).toFixed(2)}
                       </span>
                     </div>
-                    {state.total < 50 && (
-                      <p className="text-xs text-[#2d4a3e] text-center mt-1">
-                        Add ${(50 - state.total).toFixed(2)} more for free
-                        shipping!
+                    {!state.items.some((item) => item.isSubscription) &&
+                      state.total < 50 && (
+                        <p className="text-xs text-[#2d4a3e] text-center mt-1">
+                          Add ${(50 - state.total).toFixed(2)} more for free
+                          shipping!
+                        </p>
+                      )}
+                    {state.items.some((item) => item.isSubscription) && (
+                      <p className="text-xs text-emerald-600 text-center mt-1">
+                        Subscriptions include free shipping!
                       </p>
                     )}
                   </div>
