@@ -154,38 +154,38 @@ export const faqs = [
 export const testimonials = [
   {
     quote:
-      "I've been taking Revitalife for 3 months and my energy levels have never been better. The mango flavor makes it easy to drink every morning!",
+      "I've been taking Revitalife for 3 months and my energy levels have never been better. The mango flavour makes it easy to drink every morning!",
     author: "Sarah K.",
-    location: "Portland, OR",
+    location: "London, UK",
   },
   {
     quote:
-      "As a busy mom of three, I need all the natural energy I can get. Revitalife has become an essential part of my morning routine.",
-    author: "Michael T.",
-    location: "Austin, TX",
+      "As a busy mum of three, I need all the natural energy I can get. Revitalife has become an essential part of my morning routine.",
+    author: "Emma T.",
+    location: "Manchester, UK",
   },
   {
     quote:
       "The difference in my digestion and overall wellbeing since starting Revitalife has been remarkable. Plus, it actually tastes good!",
-    author: "Jamie L.",
-    location: "Chicago, IL",
+    author: "James L.",
+    location: "Birmingham, UK",
   },
   {
     quote:
-      "I've been taking Revitalife for 3 months and my energy levels have never been better. The mango flavor makes it easy to drink every morning!",
-    author: "Sarah K.",
-    location: "Portland, OR",
+      "Working long hours in the NHS, I need something to keep me going. Revitalife has been a game-changer for my energy and focus.",
+    author: "Dr. Rachel M.",
+    location: "Edinburgh, UK",
   },
   {
     quote:
-      "As a busy mom of three, I need all the natural energy I can get. Revitalife has become an essential part of my morning routine.",
-    author: "Michael T.",
-    location: "Austin, TX",
+      "I was sceptical at first, but after 6 weeks of Revitalife, I can honestly say I feel 10 years younger. My colleagues keep asking what my secret is!",
+    author: "David P.",
+    location: "Cardiff, UK",
   },
   {
     quote:
-      "The difference in my digestion and overall wellbeing since starting Revitalife has been remarkable. Plus, it actually tastes good!",
-    author: "Jamie L.",
-    location: "Chicago, IL",
+      "As a fitness instructor, I'm always looking for natural ways to boost performance. Revitalife has become my daily essential - the results speak for themselves.",
+    author: "Sophie W.",
+    location: "Bristol, UK",
   },
 ];
