@@ -33,7 +33,8 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userSubscription, setUserSubscription] =
     useState<UserSubscription | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { signOut, user } = useAuth();
 
   // Fetch user data when modal opens or user changes
@@ -176,9 +177,23 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
 
   if (!isOpen) return null;
 
-  const handleLogout = () => {
-    signOut();
-    onClose();
+  const handleLogout = async () => {
+    // Show custom confirmation modal instead of browser confirm
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setShowLogoutConfirm(false);
+      onClose();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   const formatDate = (dateString: string | null | undefined) => {
@@ -366,6 +381,59 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
           </div>
         </div>
       </div>
+
+      {/* Custom Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-8 h-8 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Title */}
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">
+              Logout
+            </h3>
+
+            {/* Message */}
+            <p className="text-gray-600 text-center mb-8">
+              Are you sure you want to log out? You'll need to sign in again to
+              access your account.
+            </p>
+
+            {/* Buttons */}
+            <div className="flex space-x-4">
+              <button
+                onClick={cancelLogout}
+                className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="flex-1 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-medium"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
