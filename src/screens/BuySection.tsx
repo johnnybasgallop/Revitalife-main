@@ -213,12 +213,12 @@ export function BuySection() {
         ref={sectionRef}
         className="relative min-h-[95vh] flex items-center py-10 md:py-15 lg:py-32 bg-[#7F9F4B]/14 overflow-hidden"
       >
-        <div className="w-full px-4 md:px-10 lg:px-20">
+        <div className="w-full px-2 md:px-10 lg:px-20">
           <ScrollReveal variant="fadeIn" duration={1}>
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl flex items-center shadow-2xl p-10 lg:p-16 min-h-[650px] border border-gray-100 relative overflow-hidden">
+            <div className="bg-white/90 backdrop-blur-sm rounded-3xl flex items-center shadow-2xl p-4 md:p-10 lg:p-16 min-h-[650px] border border-gray-100 relative overflow-hidden">
               {/* Subtle gradient accents */}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-30 2xl:gap-40 pb-15 items-center h-full w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 lg:gap-30 2xl:gap-40 pb-15 items-center h-full w-full">
                 <div
                   ref={productRef}
                   className="relative flex justify-center items-center"
@@ -315,7 +315,7 @@ export function BuySection() {
 
                 <div>
                   <ScrollReveal variant="fadeInRight" duration={0.8}>
-                    <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+                    <h2 className="text-3xl  pt-10 md:pt-0 md:text-5xl font-bold text-gray-900 mb-4">
                       Revitalife Superfood Mix
                     </h2>
                   </ScrollReveal>
@@ -337,7 +337,7 @@ export function BuySection() {
                     duration={0.8}
                   >
                     <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center justify-between mb-0">
                         <span className="text-sm font-medium text-gray-700">
                           Subscription Plan
                         </span>
@@ -477,7 +477,7 @@ export function BuySection() {
                             <span>Adding to Cart...</span>
                           </div>
                         ) : (
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center justify-center text-center space-x-2">
                             <FaShoppingCart />
                             <span>Add to Cart</span>
                           </div>

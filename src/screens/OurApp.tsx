@@ -401,21 +401,6 @@ export function OurApp() {
                     Get Early Access
                   </button>
                 </form>
-
-                <div className="flex flex-col items-center space-y-2 mt-6 text-sm text-gray-500">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-emerald-900/80 rounded-full"></div>
-                    <span>Free to join</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-emerald-900/80 rounded-full"></div>
-                    <span>No spam</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-emerald-900/80 rounded-full"></div>
-                    <span>Unsubscribe anytime</span>
-                  </div>
-                </div>
               </div>
             ) : (
               <motion.div style={{ x: imageX }} className="relative">
@@ -504,21 +489,6 @@ export function OurApp() {
                         Get Early Access
                       </button>
                     </form>
-
-                    <div className="flex items-center space-x-4 mt-6 text-sm text-gray-500">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-emerald-900/80 rounded-full"></div>
-                        <span>Free to join</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-emerald-900/80 rounded-full"></div>
-                        <span>No spam</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-emerald-900/80 rounded-full"></div>
-                        <span>Unsubscribe anytime</span>
-                      </div>
-                    </div>
                   </div>
                 </ScrollReveal>
               </motion.div>
