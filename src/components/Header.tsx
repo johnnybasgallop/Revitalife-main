@@ -131,212 +131,212 @@ export function Header() {
 
   return (
     <div className={`${isAccountMenuOpen ? "overflow-hidden" : ""}`}>
-      <div className="sticky top-0 z-50 flex flex-col">
-        {/* Scrolling announcement bar (3 items per loop, seamless) */}
-        <div className="relative z-30 w-full bg-[#edf1e6] h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
-          <motion.div
-            className="flex flex-none"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 50, ease: "linear", repeat: Infinity }}
+      {/* Scrolling announcement bar (3 items per loop, seamless) */}
+      <div className="fixed top-0 left-0 right-0 z-[9998] w-full bg-[#edf1e6] h-12 text-sm text-emerald-900 overflow-hidden flex items-center px-4 md:px-8">
+        <motion.div
+          className="flex flex-none"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ duration: 50, ease: "linear", repeat: Infinity }}
+        >
+          <div className="flex flex-none items-center">
+            {marqueeItemsWithSpacers}
+          </div>
+          <div className="flex flex-none items-center">
+            {marqueeItemsWithSpacers}
+          </div>
+        </motion.div>
+      </div>
+
+      <header
+        className={`fixed top-12 left-0 right-0 z-[9999] bg-white text-black backdrop-blur-md md:backdrop-blur-xs transition-all duration-300 ${
+          hasScrolled ? "shadow-lg shadow-black/5" : ""
+        }`}
+      >
+        <motion.div
+          className="absolute inset-0 bg-emerald-950/93 -z-10"
+          style={{
+            opacity: 0,
+            backdropFilter: `blur(${headerBlur.get()}px)`,
+          }}
+        />
+
+        {/* Mobile row: hamburger / centered logo / icons */}
+        <div className="lg:hidden grid grid-cols-3 items-center px-3 py-2 md:px-4 md:py-3">
+          <button
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            onClick={toggleMobileMenu}
+            className="text-black justify-self-start"
           >
-            <div className="flex flex-none items-center">
-              {marqueeItemsWithSpacers}
-            </div>
-            <div className="flex flex-none items-center">
-              {marqueeItemsWithSpacers}
-            </div>
-          </motion.div>
+            {isMobileMenuOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="w-6 h-6 md:w-7 md:h-7"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="w-6 h-6 md:w-7 md:h-7"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
+          </button>
+
+          <Link href="/" className="flex items-center justify-self-center">
+            <Image
+              src="/Logo.png"
+              alt="Revitalife Logo"
+              width={0}
+              height={0}
+              className="h-10 md:h-13 w-auto"
+              priority
+            />
+          </Link>
+
+          {/* Mobile Account Icon */}
+          <div className="flex items-center justify-self-end space-x-7 md:space-x-3">
+            {/* Basket Icon for Mobile */}
+
+            {user ? (
+              <button
+                onClick={() => setIsAccountMenuOpen(true)}
+                className="flex items-center space-x-1 text-gray-600 hover:text-amber-500 transition-colors"
+                aria-label="Open account menu"
+              >
+                <FaUser className="w-5 h-5" />
+                <span className="text-xs md:text-sm font-medium text-gray-700">
+                  {(() => {
+                    const fullName = user.user_metadata?.full_name;
+                    if (!fullName) return "U";
+                    const names = fullName.split(" ");
+                    if (names.length >= 2) {
+                      return `${names[0].charAt(0).toUpperCase()}${names[1]
+                        .charAt(0)
+                        .toUpperCase()}`;
+                    }
+                    return names[0].charAt(0).toUpperCase();
+                  })()}
+                </span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center text-gray-600 hover:text-amber-500 transition-colors"
+                aria-label="Sign in"
+              >
+                <FaUser className="w-4 h-4" />
+              </button>
+            )}
+            <BasketIcon onClick={() => setIsBasketOpen(true)} />
+          </div>
         </div>
 
-        <header
-          className={`bg-white text-black backdrop-blur-md md:backdrop-blur-xs transition-all duration-300 ${
-            hasScrolled ? "shadow-lg shadow-black/5" : ""
-          }`}
-        >
-          <motion.div
-            className="absolute inset-0 bg-emerald-950/93 -z-10"
-            style={{
-              opacity: 0,
-              backdropFilter: `blur(${headerBlur.get()}px)`,
-            }}
-          />
+        {/* Desktop row */}
+        <div className="hidden lg:flex px-4 md:px-8 py-2 md:py-3 items-center justify-between transition-all duration-300">
+          {/* Navigation - Desktop */}
+          <nav className="hidden lg:flex justify-start w-1/3 px-4">
+            <ul className="flex items-center space-x-10">
+              {navItems.map((item, index) => (
+                <li key={index}>
+                  <Link
+                    href={item.href}
+                    className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
+                    onClick={(e) => {
+                      if (isHomePage && item.href.startsWith("#")) {
+                        e.preventDefault();
+                        handleNavigation(item.href);
+                      }
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-          {/* Mobile row: hamburger / centered logo / icons */}
-          <div className="lg:hidden grid grid-cols-3 items-center px-3 py-2 md:px-4 md:py-3">
-            <button
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              onClick={toggleMobileMenu}
-              className="text-black justify-self-start"
-            >
-              {isMobileMenuOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  className="w-6 h-6 md:w-7 md:h-7"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  className="w-6 h-6 md:w-7 md:h-7"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-            </button>
-
-            <Link href="/" className="flex items-center justify-self-center">
+          <div>
+            <Link href="/" className="flex items-center">
               <Image
                 src="/Logo.png"
                 alt="Revitalife Logo"
                 width={0}
                 height={0}
-                className="h-10 md:h-13 w-auto"
+                className="h-30 md:h-15 my-1 w-auto"
                 priority
               />
             </Link>
-
-            {/* Mobile Account Icon */}
-            <div className="flex items-center justify-self-end space-x-7 md:space-x-3">
-              {/* Basket Icon for Mobile */}
-
-              {user ? (
-                <button
-                  onClick={() => setIsAccountMenuOpen(true)}
-                  className="flex items-center space-x-1 text-gray-600 hover:text-amber-500 transition-colors"
-                  aria-label="Open account menu"
-                >
-                  <FaUser className="w-5 h-5" />
-                  <span className="text-xs md:text-sm font-medium text-gray-700">
-                    {(() => {
-                      const fullName = user.user_metadata?.full_name;
-                      if (!fullName) return "U";
-                      const names = fullName.split(" ");
-                      if (names.length >= 2) {
-                        return `${names[0].charAt(0).toUpperCase()}${names[1]
-                          .charAt(0)
-                          .toUpperCase()}`;
-                      }
-                      return names[0].charAt(0).toUpperCase();
-                    })()}
-                  </span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => setIsAuthModalOpen(true)}
-                  className="flex items-center text-gray-600 hover:text-amber-500 transition-colors"
-                  aria-label="Sign in"
-                >
-                  <FaUser className="w-4 h-4" />
-                </button>
-              )}
-              <BasketIcon onClick={() => setIsBasketOpen(true)} />
-            </div>
           </div>
 
-          {/* Desktop row */}
-          <div className="hidden lg:flex px-4 md:px-8 py-2 md:py-3 items-center justify-between transition-all duration-300">
-            {/* Navigation - Desktop */}
-            <nav className="hidden lg:flex justify-start w-1/3 px-4">
-              <ul className="flex items-center space-x-10">
-                {navItems.map((item, index) => (
-                  <li key={index}>
-                    <Link
-                      href={item.href}
-                      className="whitespace-nowrap text-base font-medium text-black hover:text-amber-500 transition-colors"
-                      onClick={(e) => {
-                        if (isHomePage && item.href.startsWith("#")) {
-                          e.preventDefault();
-                          handleNavigation(item.href);
-                        }
-                      }}
+          <nav className="hidden lg:flex justify-end w-1/3 px-4">
+            <ul className="flex items-center space-x-10">
+              <li>
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                      className="flex items-center space-x-2 hover:text-amber-500 transition-colors"
                     >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <div>
-              <Link href="/" className="flex items-center">
-                <Image
-                  src="/Logo.png"
-                  alt="Revitalife Logo"
-                  width={0}
-                  height={0}
-                  className="h-30 md:h-15 my-1 w-auto"
-                  priority
-                />
-              </Link>
-            </div>
-
-            <nav className="hidden lg:flex justify-end w-1/3 px-4">
-              <ul className="flex items-center space-x-10">
-                <li>
-                  {user ? (
-                    <div className="relative">
-                      <button
-                        onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
-                        className="flex items-center space-x-2 hover:text-amber-500 transition-colors"
-                      >
-                        <FaUser className="w-5 h-5 text-gray-600" />
-                        <span className="text-sm font-medium text-gray-700">
-                          {(() => {
-                            const fullName = user.user_metadata?.full_name;
-                            if (!fullName) return "User";
-                            const names = fullName.split(" ");
-                            if (names.length >= 2) {
-                              return `${
-                                names[0].charAt(0).toUpperCase() +
-                                names[0].slice(1)
-                              } ${names[1].charAt(0).toUpperCase()}`;
-                            }
-                            return (
+                      <FaUser className="w-5 h-5 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-700">
+                        {(() => {
+                          const fullName = user.user_metadata?.full_name;
+                          if (!fullName) return "User";
+                          const names = fullName.split(" ");
+                          if (names.length >= 2) {
+                            return `${
                               names[0].charAt(0).toUpperCase() +
                               names[0].slice(1)
-                            );
-                          })()}
-                        </span>
-                      </button>
-
-                      {/* Account Menu Dropdown */}
-                      {/* Account Menu Dropdown */}
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setIsAuthModalOpen(true)}
-                      className="flex items-center space-x-2 text-base font-medium text-black hover:text-amber-500 transition-colors"
-                    >
-                      <FaUser className="w-5 h-5" />
-                      <span>Sign In</span>
+                            } ${names[1].charAt(0).toUpperCase()}`;
+                          }
+                          return (
+                            names[0].charAt(0).toUpperCase() + names[0].slice(1)
+                          );
+                        })()}
+                      </span>
                     </button>
-                  )}
-                </li>
-                <li>
-                  <BasketIcon onClick={() => setIsBasketOpen(true)} />
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </header>
-      </div>
+
+                    {/* Account Menu Dropdown */}
+                    {/* Account Menu Dropdown */}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="flex items-center space-x-2 text-base font-medium text-black hover:text-amber-500 transition-colors"
+                  >
+                    <FaUser className="w-5 h-5" />
+                    <span>Sign In</span>
+                  </button>
+                )}
+              </li>
+              <li>
+                <BasketIcon onClick={() => setIsBasketOpen(true)} />
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      {/* Spacer to prevent content from being hidden behind fixed header */}
+      <div className="h-28 md:h-32"></div>
 
       {/* Mobile menu - rendered outside header to avoid z-index conflicts */}
       {isMobileMenuOpen && (
