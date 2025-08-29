@@ -73,9 +73,14 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
         console.error("Error fetching profile:", profileError);
       } else {
         setUserProfile(profile);
+
+        // Fetch latest subscription details from Stripe if user has a Stripe customer ID
+        if (profile.stripe_customer_id) {
+          await fetchLatestSubscriptionDetails(profile.stripe_customer_id);
+        }
       }
 
-      // Fetch user subscription
+      // Fetch user subscription from database (fallback)
       const { data: subscription, error: subscriptionError } = await supabase
         .from("subscriptions")
         .select("*")
@@ -84,7 +89,10 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
         .single();
 
       if (subscriptionError && subscriptionError.code !== "PGRST116") {
-        console.error("Error fetching subscription:", subscriptionError);
+        console.error(
+          "Error fetching subscription from database:",
+          subscriptionError
+        );
       } else {
         setUserSubscription(subscription);
       }
@@ -92,6 +100,34 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
       console.error("Error fetching user data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchLatestSubscriptionDetails = async (stripeCustomerId: string) => {
+    try {
+      const response = await fetch("/api/get-subscription-details", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ stripeCustomerId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.subscription) {
+          console.log(
+            "✅ Latest subscription details from Stripe:",
+            data.subscription
+          );
+          // Update the subscription state with fresh data from Stripe
+          setUserSubscription(data.subscription);
+        }
+      } else {
+        console.error("Failed to fetch latest subscription details");
+      }
+    } catch (error) {
+      console.error("Error fetching latest subscription details:", error);
     }
   };
 
@@ -215,9 +251,12 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
               <div className="space-y-6">
                 {/* Account Details Section */}
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Account Details
-                  </h3>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                      Account Details
+                    </h3>
+                    {/* Logout Section */}
+                  </div>
 
                   {/* Profile Information */}
                   <div className="bg-gray-50 rounded-lg p-4 mb-4">
@@ -255,46 +294,6 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
                   </div>
 
                   {/* Subscription Information */}
-                  {userSubscription && (
-                    <div className="bg-blue-50 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-3">
-                        Active Subscription
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Plan:</span>
-                          <span className="font-medium capitalize">
-                            {userSubscription.plan_type} Plan
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Quantity:</span>
-                          <span className="font-medium">
-                            {userSubscription.quantity}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Current Period:</span>
-                          <span className="font-medium">
-                            {formatDate(userSubscription.current_period_start)}{" "}
-                            - {formatDate(userSubscription.current_period_end)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Status:</span>
-                          <div>{getStatusBadge(userSubscription.status)}</div>
-                        </div>
-                        {userSubscription.cancel_at_period_end && (
-                          <div className="bg-yellow-100 border border-yellow-200 rounded-lg p-3">
-                            <p className="text-yellow-800 text-sm">
-                              ⚠️ Your subscription will be canceled at the end
-                              of the current billing period.
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
 
                   {!userSubscription &&
                     userProfile?.subscription_status === "inactive" && (
@@ -311,9 +310,11 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
 
                 {/* Subscription Management Section */}
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Subscription Management
-                  </h3>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      Subscription Management
+                    </h3>
+                  </div>
                   {userSubscription ? (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="mb-4 p-3 bg-blue-50 rounded-lg">
@@ -332,7 +333,7 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
                       <div className="mt-4 w-full flex items-center justify-center py-2">
                         <button
                           onClick={openStripeCustomerPortal}
-                          className="w-full  bg-[#2d4a3e] text-white px-4 py-3 rounded-lg hover:bg-[#1a2f26] transition-colors"
+                          className="w-full max-w-[500px] bg-[#2d4a3e] text-white px-4 py-3 rounded-lg hover:bg-[#1a2f26] transition-colors"
                         >
                           Manage Subscription & Billing
                         </button>
@@ -349,20 +350,19 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
                     </div>
                   )}
                 </div>
-
-                {/* Logout Section */}
-                <div className="pt-6 border-t border-gray-200">
-                  <div className="text-center">
-                    <button
-                      onClick={handleLogout}
-                      className="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 transition-colors font-medium"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
               </div>
             )}
+
+            <div className="pt-6 w-full border-t border-gray-200">
+              <div className="text-center">
+                <button
+                  onClick={handleLogout}
+                  className="w-full bg-red-500 text-white px-8 py-4 rounded-lg hover:bg-red-600 transition-colors font-medium"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

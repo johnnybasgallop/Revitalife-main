@@ -186,30 +186,59 @@ async function handleCheckoutSessionCompleted(
     let currentPeriodStart = null;
     let currentPeriodEnd = null;
 
-    if (subscription.current_period_start) {
+    // Access subscription properties safely
+    const periodStart = (subscription as any).current_period_start;
+    const periodEnd = (subscription as any).current_period_end;
+
+    if (periodStart) {
       try {
-        currentPeriodStart = new Date(
-          subscription.current_period_start * 1000
-        ).toISOString();
+        // Stripe sends Unix timestamp in seconds, convert to milliseconds
+        const timestamp = periodStart;
+        console.log("🔍 Processing current_period_start timestamp:", timestamp);
+
+        if (typeof timestamp === "number" && timestamp > 0) {
+          currentPeriodStart = new Date(timestamp * 1000).toISOString();
+          console.log(
+            "✅ Converted current_period_start to:",
+            currentPeriodStart
+          );
+        } else {
+          console.warn("⚠️ Invalid current_period_start timestamp:", timestamp);
+        }
       } catch (error) {
         console.warn(
-          "⚠️ Invalid current_period_start:",
-          subscription.current_period_start
+          "⚠️ Error converting current_period_start:",
+          error,
+          "Value:",
+          periodStart
         );
       }
+    } else {
+      console.log("ℹ️ No current_period_start in subscription");
     }
 
-    if (subscription.current_period_end) {
+    if (periodEnd) {
       try {
-        currentPeriodEnd = new Date(
-          subscription.current_period_end * 1000
-        ).toISOString();
+        // Stripe sends Unix timestamp in seconds, convert to milliseconds
+        const timestamp = periodEnd;
+        console.log("🔍 Processing current_period_end timestamp:", timestamp);
+
+        if (typeof timestamp === "number" && timestamp > 0) {
+          currentPeriodEnd = new Date(timestamp * 1000).toISOString();
+          console.log("✅ Converted current_period_end to:", currentPeriodEnd);
+        } else {
+          console.warn("⚠️ Invalid current_period_end timestamp:", timestamp);
+        }
       } catch (error) {
         console.warn(
-          "⚠️ Invalid current_period_end:",
-          subscription.current_period_end
+          "⚠️ Error converting current_period_end:",
+          error,
+          "Value:",
+          periodEnd
         );
       }
+    } else {
+      console.log("ℹ️ No current_period_end in subscription");
     }
 
     const subscriptionRecord = await SubscriptionService.createSubscription({
@@ -221,8 +250,8 @@ async function handleCheckoutSessionCompleted(
         subscription.items.data[0]?.price.recurring?.interval || "monthly",
       stripe_price_id: subscription.items.data[0]?.price.id || "",
       quantity: subscription.items.data[0]?.quantity || 1,
-      current_period_start: currentPeriodStart,
-      current_period_end: currentPeriodEnd,
+      current_period_start: currentPeriodStart || undefined,
+      current_period_end: currentPeriodEnd || undefined,
     });
 
     console.log("✅ Subscription created successfully for user:", userId);
