@@ -180,7 +180,7 @@ export default function AccountMenu({
           </div>
 
           {/* Menu Content */}
-          <div className="flex flex-1 min-h-0">
+          <div className="flex h-96 md:h-[32rem]">
             {/* Left Sidebar */}
             <div className="w-16 md:w-1/3 bg-gray-50 border-r border-gray-200 p-2 md:p-4 flex-shrink-0">
               <nav className="space-y-2">
