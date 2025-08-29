@@ -297,13 +297,7 @@ export function BuySection() {
                     </motion.div>
 
                     {/* Product badges */}
-                    <div className="absolute -top-3 -right-3 flex flex-col space-y-2">
-                      <div className="bg-[#2d4a3e] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                        ORGANIC
-                      </div>
-                      <div className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                        PREMIUM
-                      </div>
+                    <div className="absolute top-4 -right-7 flex flex-col space-y-2">
                       {isSubscription && (
                         <div className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                           SUBSCRIPTION
