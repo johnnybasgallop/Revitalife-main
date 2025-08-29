@@ -122,12 +122,12 @@ export const faqs = [
   {
     question: "How often should I take Revitalife?",
     answer:
-      "For optimal benefits, we recommend mixing one scoop (10g) of Revitalife with 8-10oz of water or your favorite plant-based milk daily. Many customers prefer taking it in the morning as part of their wellness routine, but it can be enjoyed any time of day.",
+      "For optimal benefits, we recommend mixing one scoop (5g) of Revitalife with a glass of water or your favorite plant-based milk daily or even yoghurt. Many customers prefer taking it in the morning as part of their wellness routine, but it can be enjoyed any time of day.",
   },
   {
     question: "Does Revitalife contain any allergens?",
     answer:
-      "Revitalife is free from major allergens including gluten, dairy, soy, and nuts. However, it is manufactured in a facility that processes other products containing these allergens. If you have severe allergies, please consult your healthcare provider before use.",
+      "Revitalife is free from major allergens including gluten, dairy, soy, and nuts. However, it does contain sulphur dioxide",
   },
   {
     question: "Is Revitalife suitable for vegans?",
@@ -137,7 +137,7 @@ export const faqs = [
   {
     question: "How long does one package last?",
     answer:
-      "Each package contains 30 servings (300g), which is a one-month supply when taken as directed with one serving per day.",
+      "Each package contains 30 servings (150g), which is a one-month supply when taken as directed with one serving per day.",
   },
   {
     question: "Can I take Revitalife while pregnant or breastfeeding?",
