@@ -211,7 +211,7 @@ export function BuySection() {
       <section
         id="buy"
         ref={sectionRef}
-        className="relative min-h-[95vh] flex items-center pb-10 md:py-15 lg:py-32 bg-[#7F9F4B]/14 overflow-hidden"
+        className="relative min-h-[95vh] flex items-center py-10 md:py-15 lg:py-32 bg-[#7F9F4B]/14 overflow-hidden"
       >
         <div className="w-full px-4 md:px-10 lg:px-20">
           <ScrollReveal variant="fadeIn" duration={1}>
