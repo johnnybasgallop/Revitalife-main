@@ -67,6 +67,15 @@ export default function AccountMenu({
     null
   );
   const [loading, setLoading] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(false);
+  const [addressForm, setAddressForm] = useState({
+    line1: "",
+    line2: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "",
+  });
   const { signOut, user } = useAuth();
 
   // Use local state if no external control, otherwise use props
@@ -159,11 +168,141 @@ export default function AccountMenu({
       if (response.ok) {
         const data = await response.json();
         setBillingDetails(data);
+
+        // Pre-fill address form if address exists
+        if (data.shipping_address) {
+          setAddressForm({
+            line1: data.shipping_address.line1 || "",
+            line2: data.shipping_address.line2 || "",
+            city: data.shipping_address.city || "",
+            state: data.shipping_address.state || "",
+            postal_code: data.shipping_address.postal_code || "",
+            country: data.shipping_address.country || "",
+          });
+        }
       } else {
         console.error("Failed to fetch billing details");
       }
     } catch (error) {
       console.error("Error fetching billing details:", error);
+    }
+  };
+
+  const handleEditAddress = () => {
+    setEditingAddress(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingAddress(false);
+    // Reset form to current values
+    if (billingDetails?.shipping_address) {
+      setAddressForm({
+        line1: billingDetails.shipping_address.line1 || "",
+        line2: billingDetails.shipping_address.line2 || "",
+        city: billingDetails.shipping_address.city || "",
+        state: billingDetails.shipping_address.state || "",
+        postal_code: billingDetails.shipping_address.postal_code || "",
+        country: billingDetails.shipping_address.country || "",
+      });
+    }
+  };
+
+  const handleSaveAddress = async () => {
+    if (!userProfile?.stripe_customer_id) return;
+
+    try {
+      const response = await fetch("/api/update-shipping-address", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stripeCustomerId: userProfile.stripe_customer_id,
+          address: addressForm,
+        }),
+      });
+
+      if (response.ok) {
+        setEditingAddress(false);
+        // Refresh billing details
+        await fetchBillingDetails(userProfile.stripe_customer_id);
+      } else {
+        console.error("Failed to update address");
+      }
+    } catch (error) {
+      console.error("Error updating address:", error);
+    }
+  };
+
+  const openStripeCustomerPortal = async () => {
+    if (!userProfile?.stripe_customer_id) {
+      console.error("❌ No Stripe customer ID found in user profile");
+      alert(
+        "No billing information available. Please complete a purchase first."
+      );
+      return;
+    }
+
+    console.log(
+      "🔍 Attempting to open portal for customer:",
+      userProfile.stripe_customer_id
+    );
+    console.log("🔍 User profile:", userProfile);
+
+    try {
+      const response = await fetch("/api/create-portal-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stripeCustomerId: userProfile.stripe_customer_id,
+          returnUrl: window.location.href,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.url) {
+        console.log("🚀 Redirecting to Stripe Customer Portal:", data.url);
+        window.location.href = data.url;
+      } else {
+        console.error(
+          "❌ Failed to create portal session:",
+          data.error || "Unknown error"
+        );
+        // Show user-friendly error message
+        alert(
+          `Unable to open billing portal: ${
+            data.error || "Please try again later"
+          }`
+        );
+      }
+    } catch (error) {
+      console.error("❌ Error opening customer portal:", error);
+      alert("Unable to open billing portal. Please try again later.");
+    }
+  };
+
+  const verifyStripeCustomer = async () => {
+    if (!userProfile?.stripe_customer_id) return false;
+
+    try {
+      const response = await fetch("/api/verify-stripe-customer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stripeCustomerId: userProfile.stripe_customer_id,
+        }),
+      });
+
+      const data = await response.json();
+      return response.ok && data.exists;
+    } catch (error) {
+      console.error("Error verifying Stripe customer:", error);
+      return false;
     }
   };
 
@@ -432,15 +571,63 @@ export default function AccountMenu({
                                 "Not available"}
                             </span>
                           </div>
+                          {userProfile?.stripe_customer_id && (
+                            <div className="mt-3 p-3 bg-yellow-100 border border-yellow-200 rounded-lg">
+                              <p className="text-sm text-yellow-800">
+                                ⚠️ <strong>Customer ID Issue Detected:</strong>{" "}
+                                The Stripe customer ID in your profile appears
+                                to be invalid or outdated. This usually happens
+                                when:
+                              </p>
+                              <ul className="text-sm text-yellow-800 mt-2 ml-4 list-disc">
+                                <li>
+                                  You're using test data from a different
+                                  environment
+                                </li>
+                                <li>The customer was deleted from Stripe</li>
+                                <li>
+                                  There's a mismatch between your database and
+                                  Stripe
+                                </li>
+                              </ul>
+                              <div className="mt-3">
+                                <button
+                                  onClick={async () => {
+                                    const exists = await verifyStripeCustomer();
+                                    if (exists) {
+                                      alert(
+                                        "✅ Customer verified! You can now use the Manage button."
+                                      );
+                                    } else {
+                                      alert(
+                                        "❌ Customer not found. Please complete a new purchase to create a valid customer ID."
+                                      );
+                                    }
+                                  }}
+                                  className="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700 transition-colors"
+                                >
+                                  Verify Customer ID
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       {/* Shipping Address */}
-                      {billingDetails?.shipping_address && (
+                      {billingDetails?.shipping_address && !editingAddress && (
                         <div className="bg-blue-50 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900 mb-3">
-                            Shipping Address
-                          </h4>
+                          <div className="flex justify-between items-start mb-3">
+                            <h4 className="font-medium text-gray-900">
+                              Shipping Address
+                            </h4>
+                            <button
+                              onClick={handleEditAddress}
+                              className="text-[#2d4a3e] hover:text-[#1a2f26] text-sm font-medium"
+                            >
+                              Edit
+                            </button>
+                          </div>
                           <div className="space-y-2">
                             {billingDetails.shipping_address.line1 && (
                               <p className="text-gray-700">
@@ -469,13 +656,152 @@ export default function AccountMenu({
                         </div>
                       )}
 
+                      {/* Address Edit Form */}
+                      {editingAddress && (
+                        <div className="bg-blue-50 rounded-lg p-4">
+                          <h4 className="font-medium text-gray-900 mb-3">
+                            Edit Shipping Address
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Address Line 1
+                              </label>
+                              <input
+                                type="text"
+                                value={addressForm.line1}
+                                onChange={(e) =>
+                                  setAddressForm({
+                                    ...addressForm,
+                                    line1: e.target.value,
+                                  })
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
+                                placeholder="Street address"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Address Line 2
+                              </label>
+                              <input
+                                type="text"
+                                value={addressForm.line2}
+                                onChange={(e) =>
+                                  setAddressForm({
+                                    ...addressForm,
+                                    line2: e.target.value,
+                                  })
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
+                                placeholder="Apartment, suite, etc. (optional)"
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  City
+                                </label>
+                                <input
+                                  type="text"
+                                  value={addressForm.city}
+                                  onChange={(e) =>
+                                    setAddressForm({
+                                      ...addressForm,
+                                      city: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
+                                  placeholder="City"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  State/Province
+                                </label>
+                                <input
+                                  type="text"
+                                  value={addressForm.state}
+                                  onChange={(e) =>
+                                    setAddressForm({
+                                      ...addressForm,
+                                      state: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
+                                  placeholder="State"
+                                />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Postal Code
+                                </label>
+                                <input
+                                  type="text"
+                                  value={addressForm.postal_code}
+                                  onChange={(e) =>
+                                    setAddressForm({
+                                      ...addressForm,
+                                      postal_code: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
+                                  placeholder="Postal code"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Country
+                                </label>
+                                <input
+                                  type="text"
+                                  value={addressForm.country}
+                                  onChange={(e) =>
+                                    setAddressForm({
+                                      ...addressForm,
+                                      country: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
+                                  placeholder="Country"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex space-x-3 pt-2">
+                              <button
+                                onClick={handleSaveAddress}
+                                className="bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors"
+                              >
+                                Save Address
+                              </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Payment Methods */}
                       {billingDetails?.payment_methods &&
                         billingDetails.payment_methods.length > 0 && (
                           <div className="bg-green-50 rounded-lg p-4">
-                            <h4 className="font-medium text-gray-900 mb-3">
-                              Payment Methods
-                            </h4>
+                            <div className="flex justify-between items-start mb-3">
+                              <h4 className="font-medium text-gray-900">
+                                Payment Methods
+                              </h4>
+                              <button
+                                onClick={openStripeCustomerPortal}
+                                className="text-[#2d4a3e] hover:text-[#1a2f26] text-sm font-medium"
+                              >
+                                Manage
+                              </button>
+                            </div>
                             <div className="space-y-3">
                               {billingDetails.payment_methods.map((method) => (
                                 <div
@@ -509,11 +835,15 @@ export default function AccountMenu({
                                       )}
                                     </div>
                                   </div>
-                                  <button className="text-red-500 hover:text-red-700 text-sm font-medium">
-                                    Remove
-                                  </button>
                                 </div>
                               ))}
+                            </div>
+                            <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+                              <p className="text-sm text-blue-800">
+                                💡 Use the "Manage" button above to add, remove,
+                                or update payment methods securely through
+                                Stripe.
+                              </p>
                             </div>
                           </div>
                         )}
