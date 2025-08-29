@@ -31,6 +31,27 @@ interface UserSubscription {
   cancel_at_period_end: boolean;
 }
 
+interface BillingDetails {
+  shipping_address: {
+    line1: string | null;
+    line2: string | null;
+    city: string | null;
+    state: string | null;
+    postal_code: string | null;
+    country: string | null;
+  } | null;
+  payment_methods: Array<{
+    id: string;
+    type: string;
+    card?: {
+      brand: string;
+      last4: string;
+      exp_month: number;
+      exp_year: number;
+    };
+  }>;
+}
+
 export default function AccountMenu({
   isOpen,
   onClose,
@@ -42,6 +63,9 @@ export default function AccountMenu({
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userSubscription, setUserSubscription] =
     useState<UserSubscription | null>(null);
+  const [billingDetails, setBillingDetails] = useState<BillingDetails | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const { signOut, user } = useAuth();
 
@@ -95,6 +119,11 @@ export default function AccountMenu({
         console.error("Error fetching profile:", profileError);
       } else {
         setUserProfile(profile);
+
+        // Fetch billing details if user has Stripe customer ID
+        if (profile.stripe_customer_id) {
+          await fetchBillingDetails(profile.stripe_customer_id);
+        }
       }
 
       // Fetch user subscription
@@ -114,6 +143,27 @@ export default function AccountMenu({
       console.error("Error fetching user data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchBillingDetails = async (stripeCustomerId: string) => {
+    try {
+      const response = await fetch("/api/get-billing-details", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ stripeCustomerId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBillingDetails(data);
+      } else {
+        console.error("Failed to fetch billing details");
+      }
+    } catch (error) {
+      console.error("Error fetching billing details:", error);
     }
   };
 
@@ -366,7 +416,12 @@ export default function AccountMenu({
                       <h3 className="text-xl font-semibold text-gray-900 mb-4">
                         Billing Information
                       </h3>
+
+                      {/* Stripe Customer ID */}
                       <div className="bg-gray-50 rounded-lg p-4">
+                        <h4 className="font-medium text-gray-900 mb-3">
+                          Account Information
+                        </h4>
                         <div className="space-y-3">
                           <div className="flex justify-between">
                             <span className="text-gray-600">
@@ -377,16 +432,104 @@ export default function AccountMenu({
                                 "Not available"}
                             </span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">
-                              Billing Address:
-                            </span>
-                            <span className="text-gray-500">
-                              Update in Stripe Dashboard
-                            </span>
-                          </div>
                         </div>
                       </div>
+
+                      {/* Shipping Address */}
+                      {billingDetails?.shipping_address && (
+                        <div className="bg-blue-50 rounded-lg p-4">
+                          <h4 className="font-medium text-gray-900 mb-3">
+                            Shipping Address
+                          </h4>
+                          <div className="space-y-2">
+                            {billingDetails.shipping_address.line1 && (
+                              <p className="text-gray-700">
+                                {billingDetails.shipping_address.line1}
+                              </p>
+                            )}
+                            {billingDetails.shipping_address.line2 && (
+                              <p className="text-gray-700">
+                                {billingDetails.shipping_address.line2}
+                              </p>
+                            )}
+                            <p className="text-gray-700">
+                              {billingDetails.shipping_address.city &&
+                                billingDetails.shipping_address.city}
+                              {billingDetails.shipping_address.state &&
+                                `, ${billingDetails.shipping_address.state}`}
+                              {billingDetails.shipping_address.postal_code &&
+                                ` ${billingDetails.shipping_address.postal_code}`}
+                            </p>
+                            {billingDetails.shipping_address.country && (
+                              <p className="text-gray-700">
+                                {billingDetails.shipping_address.country}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Payment Methods */}
+                      {billingDetails?.payment_methods &&
+                        billingDetails.payment_methods.length > 0 && (
+                          <div className="bg-green-50 rounded-lg p-4">
+                            <h4 className="font-medium text-gray-900 mb-3">
+                              Payment Methods
+                            </h4>
+                            <div className="space-y-3">
+                              {billingDetails.payment_methods.map((method) => (
+                                <div
+                                  key={method.id}
+                                  className="flex items-center justify-between p-3 bg-white rounded-lg border"
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                      <span className="text-sm font-medium text-gray-600">
+                                        {method.card?.brand
+                                          ?.charAt(0)
+                                          .toUpperCase() || "💳"}
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-gray-900">
+                                        {method.card?.brand
+                                          ? `${
+                                              method.card.brand
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                              method.card.brand.slice(1)
+                                            } ending in ${method.card.last4}`
+                                          : "Payment Method"}
+                                      </p>
+                                      {method.card && (
+                                        <p className="text-sm text-gray-500">
+                                          Expires {method.card.exp_month}/
+                                          {method.card.exp_year}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <button className="text-red-500 hover:text-red-700 text-sm font-medium">
+                                    Remove
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                      {!billingDetails?.shipping_address &&
+                        !billingDetails?.payment_methods && (
+                          <div className="bg-gray-100 rounded-lg p-4 text-center">
+                            <p className="text-gray-600 mb-3">
+                              No billing information available
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Complete a purchase to see your billing details
+                              here
+                            </p>
+                          </div>
+                        )}
                     </div>
                   )}
 
