@@ -315,31 +315,8 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
                     Subscription Management
                   </h3>
                   {userSubscription ? (
-                    <div className="bg-blue-50 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-3">
-                        Current Subscription
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Status:</span>
-                          <div>{getStatusBadge(userSubscription.status)}</div>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Next Billing:</span>
-                          <span className="font-medium">
-                            {formatDate(userSubscription.current_period_end)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <button
-                          onClick={openStripeCustomerPortal}
-                          className="w-full bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors"
-                        >
-                          Manage Subscription & Billing
-                        </button>
-                      </div>
-                      <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                         <p className="text-sm text-blue-800">
                           💡 Use the "Manage Subscription & Billing" button
                           above to:
@@ -350,6 +327,15 @@ export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
                           <li>Change shipping and billing addresses</li>
                           <li>View billing history and invoices</li>
                         </ul>
+                      </div>
+
+                      <div className="mt-4 w-full flex items-center justify-center py-2">
+                        <button
+                          onClick={openStripeCustomerPortal}
+                          className="w-full  bg-[#2d4a3e] text-white px-4 py-3 rounded-lg hover:bg-[#1a2f26] transition-colors"
+                        >
+                          Manage Subscription & Billing
+                        </button>
                       </div>
                     </div>
                   ) : (
