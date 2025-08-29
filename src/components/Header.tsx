@@ -162,7 +162,7 @@ export function Header() {
           />
 
           {/* Mobile row: hamburger / centered logo / icons */}
-          <div className="lg:hidden grid grid-cols-3 items-center px-4 py-3">
+          <div className="lg:hidden grid grid-cols-3 items-center px-3 py-2 md:px-4 md:py-3">
             <button
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               onClick={toggleMobileMenu}
@@ -174,7 +174,7 @@ export function Header() {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  className="w-7 h-7"
+                  className="w-6 h-6 md:w-7 md:h-7"
                 >
                   <path
                     strokeLinecap="round"
@@ -189,7 +189,7 @@ export function Header() {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  className="w-7 h-7"
+                  className="w-6 h-6 md:w-7 md:h-7"
                 >
                   <path
                     strokeLinecap="round"
@@ -207,13 +207,15 @@ export function Header() {
                 alt="Revitalife Logo"
                 width={0}
                 height={0}
-                className="h-13 w-auto"
+                className="h-10 md:h-13 w-auto"
                 priority
               />
             </Link>
 
             {/* Mobile Account Icon */}
-            <div className="flex items-center justify-self-end space-x-4">
+            <div className="flex items-center justify-self-end space-x-7 md:space-x-3">
+              {/* Basket Icon for Mobile */}
+
               {user ? (
                 <button
                   onClick={() => setIsAccountMenuOpen(true)}
@@ -221,7 +223,7 @@ export function Header() {
                   aria-label="Open account menu"
                 >
                   <FaUser className="w-5 h-5" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs md:text-sm font-medium text-gray-700">
                     {(() => {
                       const fullName = user.user_metadata?.full_name;
                       if (!fullName) return "U";
@@ -238,15 +240,13 @@ export function Header() {
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="flex items-center space-x-2 text-gray-600 hover:text-amber-500 transition-colors"
+                  className="flex items-center text-gray-600 hover:text-amber-500 transition-colors"
                   aria-label="Sign in"
                 >
-                  <FaUser className="w-5 h-5" />
-                  <span className="text-sm font-medium text-gray-700">
-                    Sign in
-                  </span>
+                  <FaUser className="w-4 h-4" />
                 </button>
               )}
+              <BasketIcon onClick={() => setIsBasketOpen(true)} />
             </div>
           </div>
 
@@ -378,6 +378,17 @@ export function Header() {
               </button>
             </div>
             <ul className="space-y-5">
+              {/* Basket Item in Mobile Menu */}
+              <li className="flex items-center justify-between">
+                <span className="text-lg font-medium">Basket</span>
+                <BasketIcon
+                  onClick={() => {
+                    setIsBasketOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                />
+              </li>
+
               {navItems.map((item, index) => (
                 <li key={index}>
                   <Link
