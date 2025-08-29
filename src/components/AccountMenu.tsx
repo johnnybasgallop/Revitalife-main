@@ -8,8 +8,6 @@ import { supabase } from "../lib/supabase";
 interface AccountMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  activeMenuItem?: string;
-  onMenuItemChange?: (itemId: string) => void;
 }
 
 interface UserProfile {
@@ -31,65 +29,12 @@ interface UserSubscription {
   cancel_at_period_end: boolean;
 }
 
-interface BillingDetails {
-  shipping_address: {
-    line1: string | null;
-    line2: string | null;
-    city: string | null;
-    state: string | null;
-    postal_code: string | null;
-    country: string | null;
-  } | null;
-  payment_methods: Array<{
-    id: string;
-    type: string;
-    card?: {
-      brand: string;
-      last4: string;
-      exp_month: number;
-      exp_year: number;
-    };
-  }>;
-}
-
-export default function AccountMenu({
-  isOpen,
-  onClose,
-  activeMenuItem = "details",
-  onMenuItemChange,
-}: AccountMenuProps) {
-  const [localActiveMenuItem, setLocalActiveMenuItem] =
-    useState(activeMenuItem);
+export default function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userSubscription, setUserSubscription] =
     useState<UserSubscription | null>(null);
-  const [billingDetails, setBillingDetails] = useState<BillingDetails | null>(
-    null
-  );
   const [loading, setLoading] = useState(false);
-  const [editingAddress, setEditingAddress] = useState(false);
-  const [addressForm, setAddressForm] = useState({
-    line1: "",
-    line2: "",
-    city: "",
-    state: "",
-    postal_code: "",
-    country: "",
-  });
   const { signOut, user } = useAuth();
-
-  // Use local state if no external control, otherwise use props
-  const currentActiveMenuItem = onMenuItemChange
-    ? activeMenuItem
-    : localActiveMenuItem;
-  const setCurrentActiveMenuItem = onMenuItemChange || setLocalActiveMenuItem;
-
-  // Sync local state when prop changes
-  useEffect(() => {
-    if (onMenuItemChange) {
-      setLocalActiveMenuItem(activeMenuItem);
-    }
-  }, [activeMenuItem, onMenuItemChange]);
 
   // Fetch user data when modal opens or user changes
   useEffect(() => {
@@ -128,11 +73,6 @@ export default function AccountMenu({
         console.error("Error fetching profile:", profileError);
       } else {
         setUserProfile(profile);
-
-        // Fetch billing details if user has Stripe customer ID
-        if (profile.stripe_customer_id) {
-          await fetchBillingDetails(profile.stripe_customer_id);
-        }
       }
 
       // Fetch user subscription
@@ -155,85 +95,6 @@ export default function AccountMenu({
     }
   };
 
-  const fetchBillingDetails = async (stripeCustomerId: string) => {
-    try {
-      const response = await fetch("/api/get-billing-details", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ stripeCustomerId }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setBillingDetails(data);
-
-        // Pre-fill address form if address exists
-        if (data.shipping_address) {
-          setAddressForm({
-            line1: data.shipping_address.line1 || "",
-            line2: data.shipping_address.line2 || "",
-            city: data.shipping_address.city || "",
-            state: data.shipping_address.state || "",
-            postal_code: data.shipping_address.postal_code || "",
-            country: data.shipping_address.country || "",
-          });
-        }
-      } else {
-        console.error("Failed to fetch billing details");
-      }
-    } catch (error) {
-      console.error("Error fetching billing details:", error);
-    }
-  };
-
-  const handleEditAddress = () => {
-    setEditingAddress(true);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingAddress(false);
-    // Reset form to current values
-    if (billingDetails?.shipping_address) {
-      setAddressForm({
-        line1: billingDetails.shipping_address.line1 || "",
-        line2: billingDetails.shipping_address.line2 || "",
-        city: billingDetails.shipping_address.city || "",
-        state: billingDetails.shipping_address.state || "",
-        postal_code: billingDetails.shipping_address.postal_code || "",
-        country: billingDetails.shipping_address.country || "",
-      });
-    }
-  };
-
-  const handleSaveAddress = async () => {
-    if (!userProfile?.stripe_customer_id) return;
-
-    try {
-      const response = await fetch("/api/update-shipping-address", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          stripeCustomerId: userProfile.stripe_customer_id,
-          address: addressForm,
-        }),
-      });
-
-      if (response.ok) {
-        setEditingAddress(false);
-        // Refresh billing details
-        await fetchBillingDetails(userProfile.stripe_customer_id);
-      } else {
-        console.error("Failed to update address");
-      }
-    } catch (error) {
-      console.error("Error updating address:", error);
-    }
-  };
-
   const openStripeCustomerPortal = async () => {
     if (!userProfile?.stripe_customer_id) {
       console.error("❌ No Stripe customer ID found in user profile");
@@ -242,12 +103,6 @@ export default function AccountMenu({
       );
       return;
     }
-
-    console.log(
-      "🔍 Attempting to open portal for customer:",
-      userProfile.stripe_customer_id
-    );
-    console.log("🔍 User profile:", userProfile);
 
     try {
       const response = await fetch("/api/create-portal-session", {
@@ -271,7 +126,6 @@ export default function AccountMenu({
           "❌ Failed to create portal session:",
           data.error || "Unknown error"
         );
-        // Show user-friendly error message
         alert(
           `Unable to open billing portal: ${
             data.error || "Please try again later"
@@ -281,28 +135,6 @@ export default function AccountMenu({
     } catch (error) {
       console.error("❌ Error opening customer portal:", error);
       alert("Unable to open billing portal. Please try again later.");
-    }
-  };
-
-  const verifyStripeCustomer = async () => {
-    if (!userProfile?.stripe_customer_id) return false;
-
-    try {
-      const response = await fetch("/api/verify-stripe-customer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          stripeCustomerId: userProfile.stripe_customer_id,
-        }),
-      });
-
-      const data = await response.json();
-      return response.ok && data.exists;
-    } catch (error) {
-      console.error("Error verifying Stripe customer:", error);
-      return false;
     }
   };
 
@@ -369,585 +201,182 @@ export default function AccountMenu({
           </div>
 
           {/* Menu Content */}
-          <div className="flex h-96 md:h-[32rem]">
-            {/* Left Sidebar */}
-            <div className="w-16 md:w-1/3 bg-gray-50 border-r border-gray-200 p-2 md:p-4 flex-shrink-0">
-              <nav className="space-y-2">
-                {[
-                  {
-                    id: "details",
-                    label: "Details",
-                    icon: "👤",
-                  },
-                  {
-                    id: "billing",
-                    label: "Billing Info",
-                    icon: "💳",
-                  },
-                  {
-                    id: "subscription",
-                    label: "Subscription",
-                    icon: "📅",
-                  },
-                  {
-                    id: "settings",
-                    label: "Settings",
-                    icon: "⚙️",
-                  },
-                  {
-                    id: "logout",
-                    label: "Logout",
-                    icon: "🚪",
-                  },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      if (item.id === "logout") {
-                        handleLogout();
-                      } else {
-                        setCurrentActiveMenuItem(item.id);
-                      }
-                    }}
-                    title={item.label}
-                    className={`w-full flex flex-col md:flex-row items-center justify-center md:justify-start px-2 md:px-4 py-3 rounded-lg transition-colors ${
-                      currentActiveMenuItem === item.id
-                        ? "bg-[#2d4a3e] text-white"
-                        : "text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    <span className="text-lg md:text-base md:mr-3">
-                      {item.icon}
-                    </span>
-                    <span className="hidden md:inline">{item.label}</span>
-                  </button>
-                ))}
-              </nav>
-            </div>
-
-            {/* Right Content Area */}
-            <div className="w-[calc(100%-4rem)] md:w-2/3 p-4 md:p-6 overflow-y-auto">
-              {loading ? (
-                <div className="h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <FaSpinner className="h-8 w-8 animate-spin text-[#2d4a3e] mx-auto mb-4" />
-                    <p className="text-gray-500">
-                      Loading your account information...
-                    </p>
-                  </div>
+          <div className="h-96 md:h-[32rem] overflow-y-auto p-6">
+            {loading ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center">
+                  <FaSpinner className="h-8 w-8 animate-spin text-[#2d4a3e] mx-auto mb-4" />
+                  <p className="text-gray-500">
+                    Loading your account information...
+                  </p>
                 </div>
-              ) : (
-                <div className="h-full">
-                  {currentActiveMenuItem === "details" && (
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                          Account Details
-                        </h3>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Account Details Section */}
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    Account Details
+                  </h3>
 
-                        {/* Profile Information */}
-                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                          <h4 className="font-medium text-gray-900 mb-3">
-                            Profile Information
-                          </h4>
-                          <div className="space-y-3">
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Full Name:</span>
-                              <span className="font-medium">
-                                {userProfile?.full_name || "N/A"}
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Email:</span>
-                              <span className="font-medium">
-                                {userProfile?.email || "N/A"}
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">
-                                Member Since:
-                              </span>
-                              <span className="font-medium">
-                                {formatDate(userProfile?.created_at)}
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">
-                                Subscription Status:
-                              </span>
-                              <div>
-                                {getStatusBadge(
-                                  userProfile?.subscription_status
-                                )}
-                              </div>
-                            </div>
-                          </div>
+                  {/* Profile Information */}
+                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Profile Information
+                    </h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Full Name:</span>
+                        <span className="font-medium">
+                          {userProfile?.full_name || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Email:</span>
+                        <span className="font-medium">
+                          {userProfile?.email || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Member Since:</span>
+                        <span className="font-medium">
+                          {formatDate(userProfile?.created_at)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          Subscription Status:
+                        </span>
+                        <div>
+                          {getStatusBadge(userProfile?.subscription_status)}
                         </div>
+                      </div>
+                    </div>
+                  </div>
 
-                        {/* Subscription Information */}
-                        {userSubscription && (
-                          <div className="bg-blue-50 rounded-lg p-4">
-                            <h4 className="font-medium text-gray-900 mb-3">
-                              Active Subscription
-                            </h4>
-                            <div className="space-y-3">
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">Plan:</span>
-                                <span className="font-medium capitalize">
-                                  {userSubscription.plan_type} Plan
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">Quantity:</span>
-                                <span className="font-medium">
-                                  {userSubscription.quantity}
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">
-                                  Current Period:
-                                </span>
-                                <span className="font-medium">
-                                  {formatDate(
-                                    userSubscription.current_period_start
-                                  )}{" "}
-                                  -{" "}
-                                  {formatDate(
-                                    userSubscription.current_period_end
-                                  )}
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">Status:</span>
-                                <div>
-                                  {getStatusBadge(userSubscription.status)}
-                                </div>
-                              </div>
-                              {userSubscription.cancel_at_period_end && (
-                                <div className="bg-yellow-100 border border-yellow-200 rounded-lg p-3">
-                                  <p className="text-yellow-800 text-sm">
-                                    ⚠️ Your subscription will be canceled at the
-                                    end of the current billing period.
-                                  </p>
-                                </div>
-                              )}
-                            </div>
+                  {/* Subscription Information */}
+                  {userSubscription && (
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-900 mb-3">
+                        Active Subscription
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Plan:</span>
+                          <span className="font-medium capitalize">
+                            {userSubscription.plan_type} Plan
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Quantity:</span>
+                          <span className="font-medium">
+                            {userSubscription.quantity}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Current Period:</span>
+                          <span className="font-medium">
+                            {formatDate(userSubscription.current_period_start)}{" "}
+                            - {formatDate(userSubscription.current_period_end)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Status:</span>
+                          <div>{getStatusBadge(userSubscription.status)}</div>
+                        </div>
+                        {userSubscription.cancel_at_period_end && (
+                          <div className="bg-yellow-100 border border-yellow-200 rounded-lg p-3">
+                            <p className="text-yellow-800 text-sm">
+                              ⚠️ Your subscription will be canceled at the end
+                              of the current billing period.
+                            </p>
                           </div>
                         )}
-
-                        {!userSubscription &&
-                          userProfile?.subscription_status === "inactive" && (
-                            <div className="bg-gray-100 rounded-lg p-4 text-center">
-                              <p className="text-gray-600 mb-3">
-                                No active subscription
-                              </p>
-                              <button className="bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors">
-                                Subscribe Now
-                              </button>
-                            </div>
-                          )}
                       </div>
                     </div>
                   )}
 
-                  {currentActiveMenuItem === "billing" && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                        Billing Information
-                      </h3>
-
-                      {/* Stripe Customer ID */}
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <h4 className="font-medium text-gray-900 mb-3">
-                          Account Information
-                        </h4>
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">
-                              Stripe Customer ID:
-                            </span>
-                            <span className="font-mono text-sm">
-                              {userProfile?.stripe_customer_id ||
-                                "Not available"}
-                            </span>
-                          </div>
-                          {userProfile?.stripe_customer_id && (
-                            <div className="mt-3 p-3 bg-yellow-100 border border-yellow-200 rounded-lg">
-                              <p className="text-sm text-yellow-800">
-                                ⚠️ <strong>Customer ID Issue Detected:</strong>{" "}
-                                The Stripe customer ID in your profile appears
-                                to be invalid or outdated. This usually happens
-                                when:
-                              </p>
-                              <ul className="text-sm text-yellow-800 mt-2 ml-4 list-disc">
-                                <li>
-                                  You're using test data from a different
-                                  environment
-                                </li>
-                                <li>The customer was deleted from Stripe</li>
-                                <li>
-                                  There's a mismatch between your database and
-                                  Stripe
-                                </li>
-                              </ul>
-                              <div className="mt-3">
-                                <button
-                                  onClick={async () => {
-                                    const exists = await verifyStripeCustomer();
-                                    if (exists) {
-                                      alert(
-                                        "✅ Customer verified! You can now use the Manage button."
-                                      );
-                                    } else {
-                                      alert(
-                                        "❌ Customer not found. Please complete a new purchase to create a valid customer ID."
-                                      );
-                                    }
-                                  }}
-                                  className="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700 transition-colors"
-                                >
-                                  Verify Customer ID
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Shipping Address */}
-                      {billingDetails?.shipping_address && !editingAddress && (
-                        <div className="bg-blue-50 rounded-lg p-4">
-                          <div className="flex justify-between items-start mb-3">
-                            <h4 className="font-medium text-gray-900">
-                              Shipping Address
-                            </h4>
-                            <button
-                              onClick={handleEditAddress}
-                              className="text-[#2d4a3e] hover:text-[#1a2f26] text-sm font-medium"
-                            >
-                              Edit
-                            </button>
-                          </div>
-                          <div className="space-y-2">
-                            {billingDetails.shipping_address.line1 && (
-                              <p className="text-gray-700">
-                                {billingDetails.shipping_address.line1}
-                              </p>
-                            )}
-                            {billingDetails.shipping_address.line2 && (
-                              <p className="text-gray-700">
-                                {billingDetails.shipping_address.line2}
-                              </p>
-                            )}
-                            <p className="text-gray-700">
-                              {billingDetails.shipping_address.city &&
-                                billingDetails.shipping_address.city}
-                              {billingDetails.shipping_address.state &&
-                                `, ${billingDetails.shipping_address.state}`}
-                              {billingDetails.shipping_address.postal_code &&
-                                ` ${billingDetails.shipping_address.postal_code}`}
-                            </p>
-                            {billingDetails.shipping_address.country && (
-                              <p className="text-gray-700">
-                                {billingDetails.shipping_address.country}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Address Edit Form */}
-                      {editingAddress && (
-                        <div className="bg-blue-50 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900 mb-3">
-                            Edit Shipping Address
-                          </h4>
-                          <div className="space-y-3">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Address Line 1
-                              </label>
-                              <input
-                                type="text"
-                                value={addressForm.line1}
-                                onChange={(e) =>
-                                  setAddressForm({
-                                    ...addressForm,
-                                    line1: e.target.value,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
-                                placeholder="Street address"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Address Line 2
-                              </label>
-                              <input
-                                type="text"
-                                value={addressForm.line2}
-                                onChange={(e) =>
-                                  setAddressForm({
-                                    ...addressForm,
-                                    line2: e.target.value,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
-                                placeholder="Apartment, suite, etc. (optional)"
-                              />
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  City
-                                </label>
-                                <input
-                                  type="text"
-                                  value={addressForm.city}
-                                  onChange={(e) =>
-                                    setAddressForm({
-                                      ...addressForm,
-                                      city: e.target.value,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
-                                  placeholder="City"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  State/Province
-                                </label>
-                                <input
-                                  type="text"
-                                  value={addressForm.state}
-                                  onChange={(e) =>
-                                    setAddressForm({
-                                      ...addressForm,
-                                      state: e.target.value,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
-                                  placeholder="State"
-                                />
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Postal Code
-                                </label>
-                                <input
-                                  type="text"
-                                  value={addressForm.postal_code}
-                                  onChange={(e) =>
-                                    setAddressForm({
-                                      ...addressForm,
-                                      postal_code: e.target.value,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
-                                  placeholder="Postal code"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Country
-                                </label>
-                                <input
-                                  type="text"
-                                  value={addressForm.country}
-                                  onChange={(e) =>
-                                    setAddressForm({
-                                      ...addressForm,
-                                      country: e.target.value,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d4a3e] focus:border-transparent"
-                                  placeholder="Country"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex space-x-3 pt-2">
-                              <button
-                                onClick={handleSaveAddress}
-                                className="bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors"
-                              >
-                                Save Address
-                              </button>
-                              <button
-                                onClick={handleCancelEdit}
-                                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Payment Methods */}
-                      {billingDetails?.payment_methods &&
-                        billingDetails.payment_methods.length > 0 && (
-                          <div className="bg-green-50 rounded-lg p-4">
-                            <div className="flex justify-between items-start mb-3">
-                              <h4 className="font-medium text-gray-900">
-                                Payment Methods
-                              </h4>
-                              <button
-                                onClick={openStripeCustomerPortal}
-                                className="text-[#2d4a3e] hover:text-[#1a2f26] text-sm font-medium"
-                              >
-                                Manage
-                              </button>
-                            </div>
-                            <div className="space-y-3">
-                              {billingDetails.payment_methods.map((method) => (
-                                <div
-                                  key={method.id}
-                                  className="flex items-center justify-between p-3 bg-white rounded-lg border"
-                                >
-                                  <div className="flex items-center space-x-3">
-                                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                                      <span className="text-sm font-medium text-gray-600">
-                                        {method.card?.brand
-                                          ?.charAt(0)
-                                          .toUpperCase() || "💳"}
-                                      </span>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium text-gray-900">
-                                        {method.card?.brand
-                                          ? `${
-                                              method.card.brand
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              method.card.brand.slice(1)
-                                            } ending in ${method.card.last4}`
-                                          : "Payment Method"}
-                                      </p>
-                                      {method.card && (
-                                        <p className="text-sm text-gray-500">
-                                          Expires {method.card.exp_month}/
-                                          {method.card.exp_year}
-                                        </p>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                            <div className="mt-4 p-3 bg-blue-100 rounded-lg">
-                              <p className="text-sm text-blue-800">
-                                💡 Use the "Manage" button above to add, remove,
-                                or update payment methods securely through
-                                Stripe.
-                              </p>
-                            </div>
-                          </div>
-                        )}
-
-                      {!billingDetails?.shipping_address &&
-                        !billingDetails?.payment_methods && (
-                          <div className="bg-gray-100 rounded-lg p-4 text-center">
-                            <p className="text-gray-600 mb-3">
-                              No billing information available
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Complete a purchase to see your billing details
-                              here
-                            </p>
-                          </div>
-                        )}
-                    </div>
-                  )}
-
-                  {currentActiveMenuItem === "subscription" && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                        Subscription Management
-                      </h3>
-                      {userSubscription ? (
-                        <div className="bg-blue-50 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900 mb-3">
-                            Current Subscription
-                          </h4>
-                          <div className="space-y-3">
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Status:</span>
-                              <div>
-                                {getStatusBadge(userSubscription.status)}
-                              </div>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">
-                                Next Billing:
-                              </span>
-                              <span className="font-medium">
-                                {formatDate(
-                                  userSubscription.current_period_end
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="mt-4 space-y-2">
-                            <button className="w-full bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
-                              Pause Subscription
-                            </button>
-                            <button className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
-                              Cancel Subscription
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="bg-gray-100 rounded-lg p-4 text-center">
-                          <p className="text-gray-600 mb-3">
-                            No active subscription
-                          </p>
-                          <button className="bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors">
-                            Subscribe Now
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {currentActiveMenuItem === "settings" && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                        Account Settings
-                      </h3>
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-gray-600">
-                          Account settings and preferences will be available
-                          here.
+                  {!userSubscription &&
+                    userProfile?.subscription_status === "inactive" && (
+                      <div className="bg-gray-100 rounded-lg p-4 text-center">
+                        <p className="text-gray-600 mb-3">
+                          No active subscription
                         </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {currentActiveMenuItem === "logout" && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                        Logout
-                      </h3>
-                      <div className="bg-gray-50 rounded-lg p-4 text-center">
-                        <p className="text-gray-600 mb-4">
-                          Are you sure you want to log out?
-                        </p>
-                        <button
-                          onClick={handleLogout}
-                          className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                        >
-                          Logout
+                        <button className="bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors">
+                          Subscribe Now
                         </button>
                       </div>
+                    )}
+                </div>
+
+                {/* Subscription Management Section */}
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    Subscription Management
+                  </h3>
+                  {userSubscription ? (
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-900 mb-3">
+                        Current Subscription
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Status:</span>
+                          <div>{getStatusBadge(userSubscription.status)}</div>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Next Billing:</span>
+                          <span className="font-medium">
+                            {formatDate(userSubscription.current_period_end)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <button
+                          onClick={openStripeCustomerPortal}
+                          className="w-full bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors"
+                        >
+                          Manage Subscription & Billing
+                        </button>
+                      </div>
+                      <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+                        <p className="text-sm text-blue-800">
+                          💡 Use the "Manage Subscription & Billing" button
+                          above to:
+                        </p>
+                        <ul className="text-sm text-blue-800 mt-2 ml-4 list-disc">
+                          <li>Pause or cancel your subscription</li>
+                          <li>Update payment methods</li>
+                          <li>Change shipping and billing addresses</li>
+                          <li>View billing history and invoices</li>
+                        </ul>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-100 rounded-lg p-4 text-center">
+                      <p className="text-gray-600 mb-3">
+                        No active subscription
+                      </p>
+                      <button className="bg-[#2d4a3e] text-white px-4 py-2 rounded-lg hover:bg-[#1a2f26] transition-colors">
+                        Subscribe Now
+                      </button>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
+
+                {/* Logout Section */}
+                <div className="pt-6 border-t border-gray-200">
+                  <div className="text-center">
+                    <button
+                      onClick={handleLogout}
+                      className="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 transition-colors font-medium"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
