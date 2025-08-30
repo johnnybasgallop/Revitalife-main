@@ -425,9 +425,9 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log("Processing invoice payment succeeded:", invoice.id);
 
   try {
-    if (invoice.subscription) {
+    if ((invoice as any).subscription) {
       const subscription = await stripe.subscriptions.retrieve(
-        invoice.subscription as string
+        (invoice as any).subscription as string
       );
       await handleSubscriptionUpdated(subscription);
     }
@@ -440,9 +440,9 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log("Processing invoice payment failed:", invoice.id);
 
   try {
-    if (invoice.subscription) {
+    if ((invoice as any).subscription) {
       const subscription = await stripe.subscriptions.retrieve(
-        invoice.subscription as string
+        (invoice as any).subscription as string
       );
       await handleSubscriptionUpdated(subscription);
     }

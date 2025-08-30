@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     // Update customer shipping address in Stripe
     const customer = await stripe.customers.update(stripeCustomerId, {
       shipping: {
+        name: "Customer",
         address: {
           line1: address.line1,
           line2: address.line2 || undefined,

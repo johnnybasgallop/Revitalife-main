@@ -1,22 +1,26 @@
 "use client";
+
+export const dynamic = "force-dynamic";
 import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaCheckCircle, FaEnvelope, FaShippingFast } from "react-icons/fa";
+import { useBasket } from "../../contexts/BasketContext";
 
-function SuccessPageContent() {
-  const { useRouter, useSearchParams } = require("next/navigation");
-  const { useEffect, useState } = require("react");
-  const { FaCheckCircle, FaEnvelope, FaShippingFast } = require("react-icons/fa");
-  const { useBasket } = require("../../contexts/BasketContext");
-
+export default function SuccessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { clearBasket } = useBasket();
   const sessionId = searchParams.get("session_id");
-  const [orderDetails, setOrderDetails] = useState(null);
+  const [orderDetails, setOrderDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (sessionId) {
+      // Clear the basket after successful payment
       clearBasket();
+
+      // Fetch order details from Stripe
       fetchOrderDetails(sessionId);
     } else {
       setLoading(false);
@@ -63,6 +67,7 @@ function SuccessPageContent() {
           </div>
         ) : orderDetails ? (
           <div className="space-y-4 mb-6">
+            {/* Order Summary */}
             <div className="bg-[#edf1e6] rounded-xl p-6 border border-[#d1d9c0] shadow-sm">
               <div className="text-center">
                 <FaCheckCircle className="w-16 h-16 text-[#2d4a3e] mx-auto mb-4" />
@@ -76,6 +81,7 @@ function SuccessPageContent() {
               </div>
             </div>
 
+            {/* Shipping Information */}
             {orderDetails.shipping && (
               <div className="bg-[#edf1e6] rounded-xl p-6 border border-[#d1d9c0] shadow-sm">
                 <h3 className="font-bold text-[#2d4a3e] mb-4 flex items-center text-lg">
@@ -96,9 +102,11 @@ function SuccessPageContent() {
                       </p>
                     )}
                     <p className="text-[#4a6b5a]">
-                      {orderDetails.shipping.address?.city}, {orderDetails.shipping.address?.state} {orderDetails.shipping.address?.postal_code}
+                      {orderDetails.shipping.address?.city},{" "}
+                      {orderDetails.shipping.address?.state}{" "}
+                      {orderDetails.shipping.address?.postal_code}
                     </p>
-                    <p className="text-[#4a6b5a]">
+                    <p className="text-[#4a6b5a] font-medium">
                       {orderDetails.shipping.address?.country}
                     </p>
                   </div>
@@ -106,47 +114,33 @@ function SuccessPageContent() {
               </div>
             )}
 
-            <div className="bg-[#edf1e6] rounded-xl p-6 border border-[#d1d9c0] shadow-sm">
-              <h3 className="font-bold text-[#2d4a3e] mb-4 flex items-center text-lg">
-                <FaEnvelope className="w-5 h-5 mr-3 text-[#2d4a3e]" />
-                Next Steps
-              </h3>
-              <div className="text-sm text-[#4a6b5a] space-y-3">
-                <p>📧 Check your email for order confirmation</p>
-                <p>📦 Your order will be shipped within 1-2 business days</p>
-                <p>📱 You'll receive tracking information via email</p>
+            {/* Customer Email */}
+            {orderDetails.customer_email && (
+              <div className="bg-[#edf1e6] rounded-xl p-6 border border-[#d1d9c0] shadow-sm">
+                <h3 className="font-bold text-[#2d4a3e] mb-4 flex items-center text-lg">
+                  <FaEnvelope className="w-5 h-5 mr-3 text-[#2d4a3e]" />
+                  Confirmation Email
+                </h3>
+                <div className="bg-white/80 rounded-lg p-4">
+                  <p className="text-sm text-[#4a6b5a]">
+                    Sent to:{" "}
+                    <span className="font-medium text-[#2d4a3e]">
+                      {orderDetails.customer_email}
+                    </span>
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        ) : (
-          <div className="text-center py-4">
-            <p className="text-sm text-gray-500">No order details available</p>
-          </div>
-        )}
+        ) : null}
 
-        <div className="space-y-3">
-          <button
-            onClick={() => router.push("/")}
-            className="w-full bg-[#2d4a3e] text-white py-3 px-6 rounded-xl font-semibold hover:bg-[#1a2f26] transition-colors duration-200"
-          >
-            Continue Shopping
-          </button>
-          <button
-            onClick={() => router.push("/account")}
-            className="w-full bg-white text-[#2d4a3e] py-3 px-6 rounded-xl font-semibold border-2 border-[#2d4a3e] hover:bg-[#2d4a3e] hover:text-white transition-colors duration-200"
-          >
-            View Account
-          </button>
-        </div>
+        <button
+          onClick={() => router.push("/")}
+          className="w-full bg-[#2d4a3e] text-white py-4 px-6 rounded-xl font-semibold hover:bg-[#1a2f26] transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+        >
+          Return to Home
+        </button>
       </div>
     </div>
-  );
-}
-
-export default function SuccessPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SuccessPageContent />
-    </Suspense>
   );
 }

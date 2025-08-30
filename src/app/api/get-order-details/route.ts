@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-07-30.basil",
 });
 
 export async function GET(request: NextRequest) {
@@ -33,13 +33,13 @@ export async function GET(request: NextRequest) {
       currency: session.currency,
       status: session.status,
       customer_email: session.customer_email,
-      shipping: session.shipping,
-      billing_address: session.billing_address,
-      line_items: session.line_items?.data || [],
+      shipping: (session as any).shipping,
+      billing_address: (session as any).billing_address,
+      line_items: (session as any).line_items?.data || [],
       created: session.created,
       payment_status: session.payment_status,
-      shipping_cost: session.shipping_cost,
-      total_details: session.total_details,
+      shipping_cost: (session as any).shipping_cost,
+      total_details: (session as any).total_details,
     };
 
     return NextResponse.json(orderDetails);
