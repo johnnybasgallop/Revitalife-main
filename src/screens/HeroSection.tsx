@@ -63,10 +63,10 @@ export function HeroSection() {
         style={{ zIndex: 3 }}
       >
         <ScrollReveal variant="fadeInDown" duration={0.8}>
-          <p className="text-gray-700 text-sm md:text-lg 2xl:text-xl font-semibold tracking-wide pt-4 mb-0 md:ml-1  md:mb-4">
+          <p className="text-gray-700 text-sm md:text-lg 2xl:text-xl font-semibold tracking-wide pt-4 mb-0 md:ml-1  md:mb-1">
             Reviatalife's
           </p>
-          <motion.h1 className=" pt-3 md:pt-0 text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-[#504C4B] font-semibold mb-6 leading-12 md:leading-20 lg:leading-27 xl:leading-30">
+          <motion.h1 className=" pt-1 md:pt-0 text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-[#504C4B] font-semibold mb-6 leading-12 md:leading-20 lg:leading-27 xl:leading-30">
             Essential Greens
             <br />
             Blend
