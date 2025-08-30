@@ -30,7 +30,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/buy-now"
                   className="text-black hover:text-amber-400 transition-colors text-sm"
                 >
                   Subscriptions
@@ -44,7 +44,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#"
+                  href="/ingredients"
                   className="text-black hover:text-amber-400 transition-colors text-sm"
                 >
                   Ingredients
