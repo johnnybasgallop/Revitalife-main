@@ -59,11 +59,11 @@ export function HeroSection() {
 
       {/* Content with staggered animations */}
       <div
-        className="mb-15 px-20 pb-30 md:py-20 flex flex-col items-start"
+        className="mb-15 px-20 pb-25 md:py-20 flex flex-col items-start"
         style={{ zIndex: 3 }}
       >
         <ScrollReveal variant="fadeInDown" duration={0.8}>
-          <p className="text-gray-700 text-sm md:text-lg 2xl:text-xl font-semibold tracking-wide pt-4 mb-0 md:ml-1  md:mb-1">
+          <p className="text-gray-700 text-sm md:text-lg 2xl:text-xl font-semibold tracking-wide pt-4 mb-0 md:ml-1  md:mb-1g">
             Reviatalife's
           </p>
           <motion.h1 className=" pt-1 md:pt-0 text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-[#504C4B] font-semibold mb-6 leading-12 md:leading-20 lg:leading-27 xl:leading-30">
