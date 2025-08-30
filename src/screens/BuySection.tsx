@@ -393,10 +393,10 @@ export function BuySection() {
                       ) : currentPricing ? (
                         <>
                           <p className="text-4xl font-bold text-gray-900">
-                            ${currentPricing.sale}
+                            £{currentPricing.sale}
                           </p>
                           <p className="text-xl text-gray-500 line-through ml-2">
-                            ${currentPricing.original}
+                            £{currentPricing.original}
                           </p>
                           <p className="text-sm text-emerald-600 font-semibold ml-3 px-2 py-1 bg-emerald-50 rounded">
                             Save {currentPricing.savings}%

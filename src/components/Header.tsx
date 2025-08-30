@@ -99,9 +99,9 @@ export function Header() {
   // Marquee items (single source of truth)
   const marqueeItems = [
     "Free UK Shipping on orders over £35",
-    "Subscribe today and save 20%",
+    "Subscribe today and save 15%",
     "Free UK Shipping on orders over £35",
-    "Subscribe today and save 20%",
+    "Subscribe today and save 15%",
   ];
 
   // Build one segment with consistent spacers between items and a trailing spacer

@@ -4,9 +4,27 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import ScrollReveal from "../components/ScrollReveal";
 
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  notifications: boolean;
+}
+
 export function OurApp() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    phone: "",
+    notifications: false,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
 
   // Check if device is mobile on component mount and window resize
   useEffect(() => {
@@ -23,6 +41,55 @@ export function OurApp() {
     // Clean up
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
+
+  const handleInputChange = (
+    field: keyof FormData,
+    value: string | boolean
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      const response = await fetch("/api/submit-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitStatus("success");
+        setSubmitMessage("Thank you! You're now on our early access list.");
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          notifications: false,
+        });
+      } else {
+        setSubmitStatus("error");
+        setSubmitMessage(
+          result.error || "Something went wrong. Please try again."
+        );
+      }
+    } catch (error) {
+      setSubmitStatus("error");
+      setSubmitMessage(
+        "Network error. Please check your connection and try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -326,7 +393,7 @@ export function OurApp() {
                   exclusive early access and special offers.
                 </p>
 
-                <form className="w-full space-y-6">
+                <form className="w-full space-y-6" onSubmit={handleSubmit}>
                   <div className="space-y-2">
                     <label
                       htmlFor="name"
@@ -338,6 +405,10 @@ export function OurApp() {
                       type="text"
                       id="name"
                       name="name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-900/80 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                       placeholder="Enter your full name"
                       required
@@ -355,6 +426,10 @@ export function OurApp() {
                       type="email"
                       id="email"
                       name="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-900/80 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                       placeholder="your@email.com"
                       required
@@ -373,8 +448,12 @@ export function OurApp() {
                       type="tel"
                       id="phone"
                       name="phone"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-900/80 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="+44 (0) 1234 567890"
                     />
                   </div>
 
@@ -383,6 +462,10 @@ export function OurApp() {
                       type="checkbox"
                       id="notifications"
                       name="notifications"
+                      checked={formData.notifications}
+                      onChange={(e) =>
+                        handleInputChange("notifications", e.target.checked)
+                      }
                       className="mt-1 h-4 w-4 text-emerald-900/80 focus:ring-emerald-900/80 border-gray-300 rounded"
                     />
                     <label
@@ -394,11 +477,36 @@ export function OurApp() {
                     </label>
                   </div>
 
+                  {/* Submit Status Messages */}
+                  {submitStatus === "success" && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <p className="text-green-800 text-sm">{submitMessage}</p>
+                    </div>
+                  )}
+
+                  {submitStatus === "error" && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <p className="text-red-800 text-sm">{submitMessage}</p>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-emerald-900/80 to-emerald-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-emerald-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    disabled={isSubmitting}
+                    className={`w-full bg-gradient-to-r from-emerald-900/80 to-emerald-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl ${
+                      isSubmitting
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:from-emerald-600 hover:to-emerald-700 transform hover:scale-105"
+                    }`}
                   >
-                    Get Early Access
+                    {isSubmitting ? (
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Signing up...</span>
+                      </div>
+                    ) : (
+                      "Get Early Access"
+                    )}
                   </button>
                 </form>
               </div>
@@ -414,18 +522,25 @@ export function OurApp() {
                       exclusive early access and special offers.
                     </p>
 
-                    <form className="w-full max-w-md space-y-6">
+                    <form
+                      className="w-full max-w-md space-y-6"
+                      onSubmit={handleSubmit}
+                    >
                       <div className="space-y-2">
                         <label
-                          htmlFor="name"
+                          htmlFor="name-desktop"
                           className="block text-sm font-medium text-gray-700"
                         >
                           Full Name
                         </label>
                         <input
                           type="text"
-                          id="name"
+                          id="name-desktop"
                           name="name"
+                          value={formData.name}
+                          onChange={(e) =>
+                            handleInputChange("name", e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-900/80 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                           placeholder="Enter your full name"
                           required
@@ -434,15 +549,19 @@ export function OurApp() {
 
                       <div className="space-y-2">
                         <label
-                          htmlFor="email"
+                          htmlFor="email-desktop"
                           className="block text-sm font-medium text-gray-700"
                         >
                           Email Address
                         </label>
                         <input
                           type="email"
-                          id="email"
+                          id="email-desktop"
                           name="email"
+                          value={formData.email}
+                          onChange={(e) =>
+                            handleInputChange("email", e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-900/80 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                           placeholder="your@email.com"
                           required
@@ -451,7 +570,7 @@ export function OurApp() {
 
                       <div className="space-y-2">
                         <label
-                          htmlFor="phone"
+                          htmlFor="phone-desktop"
                           className="block text-sm font-medium text-gray-700"
                         >
                           Phone Number{" "}
@@ -459,22 +578,30 @@ export function OurApp() {
                         </label>
                         <input
                           type="tel"
-                          id="phone"
+                          id="phone-desktop"
                           name="phone"
+                          value={formData.phone}
+                          onChange={(e) =>
+                            handleInputChange("phone", e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-900/80 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
-                          placeholder="+1 (555) 123-4567"
+                          placeholder="+44 (0) 1234 567890"
                         />
                       </div>
 
                       <div className="flex items-start space-x-3">
                         <input
                           type="checkbox"
-                          id="notifications"
+                          id="notifications-desktop"
                           name="notifications"
+                          checked={formData.notifications}
+                          onChange={(e) =>
+                            handleInputChange("notifications", e.target.checked)
+                          }
                           className="mt-1 h-4 w-4 text-emerald-900/80 focus:ring-emerald-900/80 border-gray-300 rounded"
                         />
                         <label
-                          htmlFor="notifications"
+                          htmlFor="notifications-desktop"
                           className="text-sm text-gray-600"
                         >
                           I want to receive updates about new features, wellness
@@ -482,11 +609,40 @@ export function OurApp() {
                         </label>
                       </div>
 
+                      {/* Submit Status Messages */}
+                      {submitStatus === "success" && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <p className="text-green-800 text-sm">
+                            {submitMessage}
+                          </p>
+                        </div>
+                      )}
+
+                      {submitStatus === "error" && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                          <p className="text-red-800 text-sm">
+                            {submitMessage}
+                          </p>
+                        </div>
+                      )}
+
                       <button
                         type="submit"
-                        className="w-full bg-emerald-900/80 text-white font-semibold py-4 px-6 rounded-xl hover:from-emerald-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                        disabled={isSubmitting}
+                        className={`w-full bg-emerald-900/80 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl ${
+                          isSubmitting
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:from-emerald-600 hover:to-emerald-700 transform hover:scale-105"
+                        }`}
                       >
-                        Get Early Access
+                        {isSubmitting ? (
+                          <div className="flex items-center justify-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Signing up...</span>
+                          </div>
+                        ) : (
+                          "Get Early Access"
+                        )}
                       </button>
                     </form>
                   </div>
