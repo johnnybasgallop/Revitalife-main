@@ -148,7 +148,7 @@ export function Header() {
       </div>
 
       <header
-        className={`fixed top-12 left-0 right-0 z-[9999] bg-white text-black backdrop-blur-md md:backdrop-blur-xs transition-all duration-300 ${
+        className={`fixed top-12 left-0 right-0 z-[9999] bg-white text-black  transition-all duration-300 ${
           hasScrolled ? "shadow-lg shadow-black/5" : ""
         }`}
       >
@@ -156,7 +156,7 @@ export function Header() {
           className="absolute inset-0 bg-emerald-950/93 -z-10"
           style={{
             opacity: 0,
-            backdropFilter: `blur(${headerBlur.get()}px)`,
+            backdropFilter: "none",
           }}
         />
 
@@ -204,8 +204,8 @@ export function Header() {
             <Image
               src="/Logo.png"
               alt="Revitalife Logo"
-              width={0}
-              height={0}
+              width={120}
+              height={40}
               className="h-10 md:h-13 w-auto"
               priority
             />
@@ -278,8 +278,8 @@ export function Header() {
               <Image
                 src="/Logo.png"
                 alt="Revitalife Logo"
-                width={0}
-                height={0}
+                width={120}
+                height={40}
                 className="h-30 md:h-15 my-1 w-auto"
                 priority
               />
