@@ -43,12 +43,10 @@ export default function RootLayout({
       >
         <BasketProvider>
           <NotificationProvider>
-            <AuthProvider>
-              {children}
-              <Analytics />
-            </AuthProvider>
+            <AuthProvider>{children}</AuthProvider>
           </NotificationProvider>
         </BasketProvider>
+        <Analytics />
       </body>
     </html>
   );
