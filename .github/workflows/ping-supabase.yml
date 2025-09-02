@@ -1,0 +1,63 @@
+name: Ping Supabase to Prevent Pausing
+
+on:
+  schedule:
+    - cron: "0 9 * * 1,4"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Supabase Client
+        run: npm install @supabase/supabase-js
+
+      - name: Ping Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          node -e "
+          (async () => {
+            try {
+              console.log('Starting Supabase ping...');
+
+              const { createClient } = require('@supabase/supabase-js');
+              const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
+              const { data: { session }, error: authError } = await supabase.auth.getSession();
+
+              if (authError) {
+                console.log('Auth check completed (expected for anon key)');
+              } else {
+                console.log('Auth check successful');
+              }
+
+              const response = await fetch(process.env.SUPABASE_URL + '/rest/v1/', {
+                headers: {
+                  'apikey': process.env.SUPABASE_KEY,
+                  'Authorization': 'Bearer ' + process.env.SUPABASE_KEY
+                }
+              });
+
+              if (response.ok) {
+                console.log('✅ Supabase ping successful! Status:', response.status);
+                console.log('Project will remain active.');
+              } else {
+                console.log('⚠️ Supabase responded with status:', response.status);
+              }
+
+            } catch (err) {
+              console.error('❌ Error pinging Supabase:', err.message);
+              process.exit(1);
+            }
+          })();
+          "
