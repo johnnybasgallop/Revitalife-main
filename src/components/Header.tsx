@@ -160,7 +160,7 @@ export function Header() {
           }}
         />
 
-        {/* Mobile row: hamburger / centered logo / icons */}
+        {/* Mobile row: hamburger / centered  / icons */}
         <div className="lg:hidden grid grid-cols-3 items-center px-3 py-2 md:px-4 md:py-3">
           <button
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -200,7 +200,11 @@ export function Header() {
             )}
           </button>
 
-          <Link href="/" className="flex items-center justify-self-center">
+          <Link
+            href="/"
+            className="flex items-center justify-self-center"
+            onClick={() => setIsBasketOpen(false)}
+          >
             <Image
               src="/Logo.png"
               alt="Revitalife Logo"
