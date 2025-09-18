@@ -266,7 +266,7 @@ export default function Basket() {
                       Subtotal:
                     </span>
                     <span className="text-lg font-medium text-[#2d4a3e]">
-                      ${state.total.toFixed(2)}
+                      £{state.total.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center mb-2">
