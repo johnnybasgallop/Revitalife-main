@@ -38,6 +38,10 @@ export default function Basket() {
           items: state.items,
           customerId: user?.id, // Pass customer ID for subscriptions
           userEmail: user?.email, // Pass user email for customer creation
+          // Use the current page as the cancel/return URL so the browser "back"
+          // or Stripe's cancel link returns the user to where they started.
+          returnUrl:
+            typeof window !== "undefined" ? window.location.href : undefined,
         }),
       });
 

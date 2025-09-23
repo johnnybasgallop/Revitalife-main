@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { items, customerId, userEmail } = await request.json();
+    const { items, customerId, userEmail, returnUrl } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "No items provided" }, { status: 400 });
@@ -88,6 +88,12 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const safeCancelUrl =
+      typeof returnUrl === "string" && returnUrl.startsWith("http")
+        ? returnUrl
+        : baseUrl;
+
     // Create checkout session configuration
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
@@ -102,12 +108,8 @@ export async function POST(request: NextRequest) {
         }),
 
       // Success and cancel URLs
-      success_url: `${
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-      }/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-      }/cancel`,
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: safeCancelUrl,
 
       // Customer email collection (only for one-time purchases)
       ...(hasSubscriptions ? {} : { customer_email: undefined }),
