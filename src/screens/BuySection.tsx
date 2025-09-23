@@ -416,7 +416,7 @@ export function BuySection() {
                     <p className="text-gray-600 mb-8">
                       {isSubscription
                         ? "Monthly subscription with free shipping. Cancel anytime."
-                        : "One-time purchase. Free shipping on orders over $50."}
+                        : "One-time purchase. Free shipping on orders over £35."}
                     </p>
                   </ScrollReveal>
 
