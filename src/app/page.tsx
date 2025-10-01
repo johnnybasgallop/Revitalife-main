@@ -3,7 +3,6 @@
 import { OurApp } from "@/screens/OurApp";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
-
 import {
   BuySection,
   FAQSection,
@@ -11,6 +10,7 @@ import {
   IngredientsSection,
   TestimonialsSection,
 } from "../screens";
+import { NutritionistPage } from "../screens/NutritionistPage";
 
 export default function Home() {
   return (
@@ -22,6 +22,7 @@ export default function Home() {
           <IngredientsSection />
           <BuySection />
           <TestimonialsSection />
+          <NutritionistPage />
           <OurApp />
           <FAQSection />
         </main>
