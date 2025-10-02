@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
           shipping_rate_data: {
             type: "fixed_amount",
             fixed_amount: {
-              amount: 499, // £4.99 in pence
+              amount: 150, // £4.99 in pence
               currency: "gbp",
             },
             display_name: "Express UK shipping",
@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
           shipping_rate_data: {
             type: "fixed_amount",
             fixed_amount: {
-              amount: 999, // £9.99 in pence
+              amount: 150, // £9.99 in pence
               currency: "gbp",
             },
             display_name: "International shipping",

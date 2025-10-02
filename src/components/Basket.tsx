@@ -279,7 +279,7 @@ export default function Basket() {
                       {state.items.some((item) => item.isSubscription) ||
                       state.total >= 40
                         ? "FREE"
-                        : "£4.99"}
+                        : "£1.50"}
                     </span>
                   </div>
                   <div className="border-t border-[#d1d9c0] pt-2">
