@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { BiGlobe, BiPhoneCall } from "react-icons/bi";
+import { TfiEmail } from "react-icons/tfi";
 
 export function NutritionistPage() {
   const specialties = [
@@ -66,6 +68,16 @@ export function NutritionistPage() {
 
   return (
     <div className="min-h-screen bg-white pt-0 pb-15 lg:pt-15 lg:pb-30">
+      <div className="text-center mb-4 mb:12 xl:mb-16 px-4 md:px-0">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          Our Onboard Nutritionist
+        </h2>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          At RevitaLife we're lucky enough to have the brilliant Tatiana Mercier
+          partnering with us to ensure high quality ingredients and practices
+          every step of the way
+        </p>
+      </div>
       {/* Testimonials at top on mobile only */}
       <div className="hidden bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -125,20 +137,43 @@ export function NutritionistPage() {
               </div>
 
               <div className="space-y-2 text-gray-700 text-base lg:text-lg ml-1">
-                <p className="flex items-start gap-2">
+                <a
+                  href="tel:+447872022009"
+                  aria-label="Call Tatiana Mercier"
+                  className="flex items-start gap-2 hover:text-blue-600 hover:underline"
+                >
                   <span className="font-semibold">Phone:</span>
                   <span>+44 787 202 2009</span>
-                </p>
-                <p className="flex items-start gap-2">
+                  <span className="mt-1 ml-2 lg:ml-3">
+                    <BiPhoneCall />
+                  </span>
+                </a>
+                <a
+                  href="mailto:Tatianamercier@vitalityexpression.co.uk"
+                  aria-label="Email Tatiana Mercier"
+                  className="flex items-start gap-2 hover:text-blue-600 hover:underline"
+                >
                   <span className="font-semibold">Email:</span>
                   <span className="break-all">
                     Tatianamercier@vitalityexpression.co.uk
                   </span>
-                </p>
-                <p className="flex items-start gap-2">
+                  <span className="mt-[5px] ml-2 lg:ml-3">
+                    <TfiEmail />
+                  </span>
+                </a>
+                <a
+                  href="https://www.vitalityexpression.co.uk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit vitalityexpression.co.uk"
+                  className="flex items-start gap-2 hover:text-blue-600 hover:underline"
+                >
                   <span className="font-semibold">Website:</span>
                   <span>www.vitalityexpression.co.uk</span>
-                </p>
+                  <span className="mt-[5px] ml-2 lg:ml-3">
+                    <BiGlobe />
+                  </span>
+                </a>
               </div>
 
               {/* Specialties */}
