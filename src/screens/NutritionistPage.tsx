@@ -70,12 +70,14 @@ export function NutritionistPage() {
     <div className="min-h-screen bg-white pt-0 pb-15 lg:pt-15 lg:pb-30">
       <div className="text-center mb-4 mb:12 xl:mb-16 px-4 md:px-0">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Our Onboard Nutritionist
+          Our exclusive functional practitioner and nutritionist
         </h2>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          At RevitaLife we're lucky enough to have the brilliant Tatiana Mercier
-          partnering with us to ensure high quality ingredients and practices
-          every step of the way
+          Revitalife has partnered with Tatiana as our exclusive functional
+          medicine practioner and nutritional therapist. Tatiana specialises in
+          general health and wellness, nutritional support, stress and fatigue,
+          sleep/ insomnia, hormonal weight loss and women’s health. Get in
+          contact with her below!
         </p>
       </div>
       {/* Testimonials at top on mobile only */}
