@@ -4,7 +4,11 @@ import { Suspense } from "react";
 function SuccessPageContent() {
   const { useRouter, useSearchParams } = require("next/navigation");
   const { useEffect, useState } = require("react");
-  const { FaCheckCircle, FaEnvelope, FaShippingFast } = require("react-icons/fa");
+  const {
+    FaCheckCircle,
+    FaEnvelope,
+    FaShippingFast,
+  } = require("react-icons/fa");
   const { useBasket } = require("../../contexts/BasketContext");
 
   const router = useRouter();
@@ -70,7 +74,7 @@ function SuccessPageContent() {
                   Order Confirmed
                 </h3>
                 <p className="text-[#4a6b5a] text-lg font-semibold">
-                  ${(orderDetails.amount_total / 100).toFixed(2)}{" "}
+                  {(orderDetails.amount_total / 100).toFixed(2)}{" "}
                   {orderDetails.currency?.toUpperCase()}
                 </p>
               </div>
@@ -96,7 +100,9 @@ function SuccessPageContent() {
                       </p>
                     )}
                     <p className="text-[#4a6b5a]">
-                      {orderDetails.shipping.address?.city}, {orderDetails.shipping.address?.state} {orderDetails.shipping.address?.postal_code}
+                      {orderDetails.shipping.address?.city},{" "}
+                      {orderDetails.shipping.address?.state}{" "}
+                      {orderDetails.shipping.address?.postal_code}
                     </p>
                     <p className="text-[#4a6b5a]">
                       {orderDetails.shipping.address?.country}
