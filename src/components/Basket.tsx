@@ -292,7 +292,7 @@ export default function Basket() {
                         {(state.items.some((item) => item.isSubscription) ||
                         state.total >= 40
                           ? state.total
-                          : state.total + 4.99
+                          : state.total + 1.5
                         ).toFixed(2)}
                       </span>
                     </div>

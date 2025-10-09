@@ -88,7 +88,8 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://www.revitalifestores.com";
     const safeCancelUrl =
       typeof returnUrl === "string" && returnUrl.startsWith("http")
         ? returnUrl
@@ -164,10 +165,10 @@ export async function POST(request: NextRequest) {
           shipping_rate_data: {
             type: "fixed_amount",
             fixed_amount: {
-              amount: 0,
+              amount: 150, // £1.50 in pence
               currency: "gbp",
             },
-            display_name: "Free UK shipping",
+            display_name: "Standard UK shipping",
             delivery_estimate: {
               minimum: {
                 unit: "business_day",
@@ -184,27 +185,7 @@ export async function POST(request: NextRequest) {
           shipping_rate_data: {
             type: "fixed_amount",
             fixed_amount: {
-              amount: 150, // £4.99 in pence
-              currency: "gbp",
-            },
-            display_name: "Express UK shipping",
-            delivery_estimate: {
-              minimum: {
-                unit: "business_day",
-                value: 1,
-              },
-              maximum: {
-                unit: "business_day",
-                value: 2,
-              },
-            },
-          },
-        },
-        {
-          shipping_rate_data: {
-            type: "fixed_amount",
-            fixed_amount: {
-              amount: 150, // £9.99 in pence
+              amount: 399, // £3.99 in pence
               currency: "gbp",
             },
             display_name: "International shipping",
