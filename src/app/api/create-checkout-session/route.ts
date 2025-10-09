@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       cancel_url: safeCancelUrl,
 
       // Customer email collection (only for one-time purchases)
-      ...(hasSubscriptions ? {} : { customer_email: undefined }),
+      ...(hasSubscriptions ? {} : {}),
 
       // Billing address collection
       billing_address_collection: "required",
