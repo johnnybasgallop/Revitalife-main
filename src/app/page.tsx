@@ -10,7 +10,6 @@ import {
   IngredientsSection,
   TestimonialsSection,
 } from "../screens";
-import { NutritionistPage } from "../screens/NutritionistPage";
 
 export default function Home() {
   return (
@@ -22,7 +21,6 @@ export default function Home() {
           <IngredientsSection />
           <BuySection />
           <TestimonialsSection />
-          <NutritionistPage />
           <OurApp />
           <FAQSection />
         </main>
