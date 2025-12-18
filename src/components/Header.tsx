@@ -94,7 +94,6 @@ export function Header() {
     { href: "/ingredients", label: "Ingredients" },
     { href: "/faq", label: "FAQ" },
     // { href: "/our-app", label: "Our App" },
-    { href: "/our-nutritionist", label: "Our Nutritionist" },
   ];
 
   // Marquee items (single source of truth)
